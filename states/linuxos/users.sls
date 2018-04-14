@@ -50,5 +50,6 @@ stfu-sudo-file:
     - name: /home/xthor/.sudo_as_admin_successful
 {% endif %}
     - user: xthor
+    - group: xthor
     - require:
       - user: xthor
