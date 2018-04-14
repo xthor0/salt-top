@@ -45,7 +45,7 @@ xthor sshkeys:
 stfu-sudo-file:
   file.managed:
 {% if grains.get('os', '') == 'CentOS' %}
-    - /var/db/sudo/lectured/xthor
+    - name: /var/db/sudo/lectured/xthor
 {% elif grains.get('os', '') == 'Ubuntu' %}
-    - /home/xthor/.sudo_as_admin_successful
+    - name: /home/xthor/.sudo_as_admin_successful
 {% endif %}
