@@ -10,6 +10,7 @@ add-xthor-user:
     - present
     - name: xthor
     - home: /home/xthor
+    - shell: /bin/bash
     - groups:
 {% if grains.get('os', '') == 'CentOS' %}
         - wheel
