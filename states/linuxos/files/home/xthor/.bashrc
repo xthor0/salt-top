@@ -40,4 +40,9 @@ alias ls="ls --color"
 alias salt='sudo salt'
 alias salt-key='sudo salt-key'
 alias docker='sudo docker'
+{% if grains.get('os', '') == 'CentOS' %}
 alias yum='sudo yum'
+{% elif grains.get('os', '') == 'Ubuntu' %}
+alias apt='sudo apt'
+alias apt-get='sudo apt-get'
+{% endif %}
