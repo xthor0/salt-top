@@ -39,3 +39,13 @@ xthor sshkeys:
     - mode: 644
     - require:
       - user: xthor
+
+# nobody wants to see default messages about sudo
+# ok, well, I don't :)
+stfu-sudo-file:
+  file.managed:
+{% if grains.get('os', '') == 'CentOS' %}
+    - /var/db/sudo/lectured/xthor
+{% elif grains.get('os', '') == 'Ubuntu' %}
+    - /home/xthor/.sudo_as_admin_successful
+{% endif %}
