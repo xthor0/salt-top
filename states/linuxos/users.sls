@@ -48,8 +48,8 @@ stfu-sudo-file:
     - name: /var/db/sudo/lectured/xthor
 {% elif grains.get('os', '') == 'Ubuntu' %}
     - name: /home/xthor/.sudo_as_admin_successful
-{% endif %}
     - user: xthor
     - group: xthor
+{% endif %}
     - require:
       - user: xthor
