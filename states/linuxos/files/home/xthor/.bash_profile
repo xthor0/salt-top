@@ -7,7 +7,7 @@ fi
 
 # if we want the title set correctly, this is necessary
 case "$TERM" in
-  screen*) PROMPT_COMMAND='printf %bk%s%b%b \\033 "${HOSTNAME%%.*}" \\033 \\0134';;
+  screen*) PROMPT_COMMAND='printf %bk%s%b%b \\033 "${HOSTNAME}" \\033 \\0134';;
   xterm*) PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"';;
 esac
 
