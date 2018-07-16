@@ -1,2 +1,0 @@
-# run reposync.sh every day at 2 AM
-0 2 * * * root /usr/local/bin/reposync.sh
