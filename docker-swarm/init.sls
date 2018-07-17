@@ -25,6 +25,12 @@ include:
     - require:
       - pkg: install-docker-ce-packages
 
+# TODO:
+# first - does CHG manage in /etc/salt/minion? If so - make sure this line exists:
+# include: minion.d/*
+# the documentation says this is default but it lies
+# second - write a reactor to force a mine update on the master host
+
 # build commands for swarm (executed at end of state)
 {% set swarm_init_cmd = 'docker swarm init --advertise-addr ' ~ ip %}
 {% set swarm_unless_cmd = 'docker swarm join-token worker -q' %}
