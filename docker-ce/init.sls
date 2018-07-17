@@ -1,7 +1,7 @@
 # install packages plus bash-completion files for Docker CE
 
 # only works on CentOS 7 right now :)
-{% if grains.get('os', '') == 'CentOS' and grains.get('osmajorrelease', '') == '7' %}
+{% if grains.get('os') == 'CentOS' and grains.get('osmajorrelease')|int == 7 %}
 
 docker-ce-repo:
     pkgrepo.managed:
