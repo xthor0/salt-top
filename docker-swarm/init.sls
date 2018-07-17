@@ -15,13 +15,7 @@ include:
 {% set netif = salt['pillar.get']('docker-swarm:lookup:netif', {}) %}
 
 # get the IP address of the master to build the init command
-# dummy. You should do this with a grain instead of this convoluted shell command.
-# salt docker-swarm1 grains.item ip4_interfaces:enp0s8
-{% set ip = grains['ip4_interfaces'][ ~ netif ~ ][0] %}
-
-{#
-{% set ip = salt['cmd.shell']('ip a | grep -A2 ' ~ netif ~ ' | grep inet | cut -d \  -f 6 | cut -d / -f 1') %}
-#}
+{% set ip = grains['ip4_interfaces'][netif][0] %}
 
 # we must also manage in a config file so that the salt mine functions properly
 /etc/salt/minion.d/swarm.conf:
