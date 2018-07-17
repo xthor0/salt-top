@@ -17,8 +17,8 @@ install-docker-ce-packages:
             - docker-ce
             - bash-completion
             - bash-completion-extras
-    require:
-        - pkgrepo: docker-ce-repo
+        - require:
+            - pkgrepo: docker-ce-repo
 
 install-bash-completion-docker:
     file.managed:
@@ -48,9 +48,9 @@ run-docker-services:
         - enable: True
         - watch:
             - file: /etc/docker/daemon.json
-    require:
-        - pkgrepo: docker-ce-repo
-        - pkg: install-docker-ce-packages
-        - file: /etc/docker/daemon.json
+        - require:
+            - pkgrepo: docker-ce-repo
+            - pkg: install-docker-ce-packages
+            - file: /etc/docker/daemon.json
 
 {% endif %}
