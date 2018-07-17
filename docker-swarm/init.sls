@@ -52,6 +52,14 @@ include:
 
 {% endif %}
 
+# run the previously generated swarm commands
+docker-swarm-cmd:
+    cmd.run:
+        - name: {{ swarm_init_cmd }}
+        - unless: {{ swarm_unless_cmd }}
+        - require:
+            - pkg: install-docker-ce-packages
+
 # if this is a master or manager node, drain connections so that the ONLY role is that of a manager
 {% if dockerrole != 'worker' %}
 
@@ -63,14 +71,6 @@ docker-drain-cmd:
         - pkg: install-docker-ce-packages
 
 {% endif %}
-
-# run the previously generated swarm commands
-docker-swarm-cmd:
-    cmd.run:
-        - name: {{ swarm_init_cmd }}
-        - unless: {{ swarm_unless_cmd }}
-        - require:
-            - pkg: install-docker-ce-packages
 
 # restart the salt minion if necessary
 {% if dockerrole == 'master' %}
