@@ -22,12 +22,12 @@ base-install-pkgs:
       - procps-ng
       - util-linux
       - bash-completion
-      - bash-completion-extras
 
 epel-install-pkgs:
   pkg.installed:
     - fromrepo: epel
     - pkgs:
+      - bash-completion-extras
       - ncdu
 {% endif %}
 
