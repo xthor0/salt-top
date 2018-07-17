@@ -77,6 +77,7 @@ docker-swarm-cmd:
 
 restart-salt-minion-for-swarm:
     service.running:
+        - name: salt-minion
         - watch:
             - file: /etc/salt/minion.d/swarm.conf
 
