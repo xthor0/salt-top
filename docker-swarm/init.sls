@@ -23,7 +23,7 @@ include:
     - source: salt://docker-swarm/files/swarm.conf
     - template: jinja
     - require:
-      - pkg: install-docker-ce-packages
+      - pkg: docker-ce
 
 # build commands for swarm (executed at end of state)
 {% set swarm_init_cmd = 'docker swarm init --advertise-addr ' ~ ip %}
@@ -57,8 +57,10 @@ include:
 
 docker-drain-cmd:
     cmd.run:
-        - name: docker node update --availability drain {{ salt['grains.get']('id') }}
-        - unless: docker node inspect {{ salt['grains.get']('id') }} | grep -q Availability.*drain
+      - name: docker node update --availability drain {{ salt['grains.get']('id') }}
+      - unless: docker node inspect {{ salt['grains.get']('id') }} | grep -q Availability.*drain
+      - require:
+        - pkg: docker-ce
 
 {% endif %}
 
