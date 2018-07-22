@@ -24,7 +24,7 @@ add-xthor-user:
 xthor sshkeys:
   ssh_auth.present:
     - user: xthor
-    - source: salt://states/linuxos/files/home/xthor/.ssh/authorized_keys
+    - source: salt://linuxos/files/home/xthor/.ssh/authorized_keys
     - config: /home/xthor/.ssh/authorized_keys
     - require:
       - user: xthor
@@ -32,7 +32,7 @@ xthor sshkeys:
 # add a managed file for .bashrc...
 /home/xthor/.bashrc:
   file.managed:
-    - source: salt://states/linuxos/files/home/xthor/.bashrc
+    - source: salt://linuxos/files/home/xthor/.bashrc
     - template: jinja
     - user: xthor
     - group: xthor

@@ -13,7 +13,7 @@ salt-latest:
 
 /etc/pki/rpm-gpg/saltstack-signing-key:
   file.managed:
-    - source: salt://states/linuxos/files/etc/pki/rpm-gpg/saltstack-signing-key
+    - source: salt://linuxos/files/etc/pki/rpm-gpg/saltstack-signing-key
     - user: root
     - group: root
     - mode: 644
@@ -31,7 +31,7 @@ salt-minion:
 
 /etc/salt/minion:
   file.managed:
-    - source: salt://states/linuxos/files/etc/salt/minion
+    - source: salt://linuxos/files/etc/salt/minion
     - user: root
     - group: root
     - mode: 600

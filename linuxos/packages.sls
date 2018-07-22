@@ -22,15 +22,16 @@ base-install-pkgs:
       - procps-ng
       - util-linux
       - bash-completion
-      - bash-completion-extras
 
 epel-install-pkgs:
   pkg.installed:
     - fromrepo: epel
     - pkgs:
+      - bash-completion-extras
       - ncdu
 {% endif %}
 
+# ubuntu stuff
 {% if grains.get('os', '') == 'Ubuntu' %}
 base-install-pkgs:
   pkg.installed:
