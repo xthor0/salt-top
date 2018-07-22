@@ -79,8 +79,13 @@ icinga2.service:
     service.running:
         - enable: Tru
         - require:
-            - pkg: install-icinga2-pkgs
+          - pkg: install-icinga2-pkgs
+        - watch:
+          - cmd: enable-icinga2-feature-idomysql
+          - cmd: enable-icinga2-feature-command
 
+# todo: when I'm not sick of this, should probably come from
+# pillar and foreach feature in pillar :)
 # enable ido-mysql
 enable-icinga2-feature-idomysql:
     cmd.run:
@@ -90,6 +95,12 @@ enable-icinga2-feature-idomysql:
             - file: ido-mysql-conf-file
         - watch:
             - file: ido-mysql-conf-file
+
+# enable command feature
+enable-icinga2-feature-command:
+    cmd.run:
+        - name: icinga2 feature enable command
+        - unless: icinga2 feature list | grep -q '^Enabled.*command'
 
 icinga2-create-setup-token:
     cmd.run:
