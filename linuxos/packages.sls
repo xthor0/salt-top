@@ -31,6 +31,7 @@ epel-install-pkgs:
       - ncdu
 {% endif %}
 
+# ubuntu stuff
 {% if grains.get('os', '') == 'Ubuntu' %}
 base-install-pkgs:
   pkg.installed:
