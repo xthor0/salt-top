@@ -3,6 +3,8 @@ prod:
   'G@kernel:linux and G@env:prod':
     - match: compound
     - linuxos
+  'nagios.american-ins.com':
+    - icinga2
 
 ##### development
 dev:
