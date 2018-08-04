@@ -3,6 +3,9 @@ prod:
   'G@kernel:linux and G@env:prod':
     - match: compound
     - linuxos
+  'G@kernel:linux and G@roles:docker-ce-swarm':
+    - match: compound
+    - docker-ce-swarm
   'nagios.american-ins.com':
     - icinga2
 
