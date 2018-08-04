@@ -13,6 +13,6 @@ dev:
     - linuxos
   'G@kernel:linux and G@roles:docker-swarm':
     - match: compound
-    - docker-swarm
+    - docker-ce-swarm
 
 ##### TODO: we need a way to target a feature branch...
