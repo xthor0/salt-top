@@ -1,0 +1,30 @@
+vrrp_script chk_haproxy {           # Requires keepalived-1.1.13
+        script "killall -0 haproxy"     # cheaper than pidof
+        interval 2                      # check every 2 seconds
+        weight 2                        # add 2 points of prio if OK
+        timeout 3
+        rise 2
+        fall 2
+}
+
+vrrp_instance VI_1 {
+        interface {{ pillar['docker-swarm']['lookup']['netif'] }}
+        state EQUAL
+        preempt_delay 30
+        advert_int 1
+        virtual_router_id {{pillar['docker-swarm']['lookup']['routerid']}}
+        priority {{ pillar ['docker-swarm']['lookup']['vrrp_prio'] }}
+        virtual_ipaddress {
+            {{ pillar['docker-swarm']['lookup']['routerid'] }}
+        }
+        authentication {
+            auth_type PASS
+            auth_pass {{ pillar['docker-swarm']['lookup']['vrrp_pass'] }}
+        }
+        virtual_ipaddress {
+            {{ pillar['docker-swarm']['lookup']['vip'] }}
+        }
+        track_script {
+            chk_haproxy 
+        }
+}
