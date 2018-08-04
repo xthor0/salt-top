@@ -3,7 +3,7 @@ prod:
   'G@kernel:linux and G@env:prod':
     - match: compound
     - linuxos
-  'G@kernel:linux and G@roles:docker-ce-swarm':
+  'G@kernel:linux and G@roles:docker-ce-swarm and G@env:prod':
     - match: compound
     - docker-ce-swarm
   'nagios.american-ins.com':
@@ -14,7 +14,7 @@ dev:
   'G@kernel:linux and G@env:dev':
     - match: compound
     - linuxos
-  'G@kernel:linux and G@roles:docker-ce-swarm':
+  'G@kernel:linux and G@roles:docker-ce-swarm and G@env:dev':
     - match: compound
     - docker-ce-swarm
 
