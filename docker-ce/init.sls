@@ -1,7 +1,7 @@
 # install packages plus bash-completion files for Docker CE
 
 # only works on CentOS 7 right now :)
-{% if grains.get('os') == 'CentOS' and grains.get('osmajorrelease')|int == 7 %}
+{% if grains.get('os', '') == 'CentOS' and grains.get('osmajorrelease', '') == '7' %}
 
 docker-ce-repo:
     pkgrepo.managed:
@@ -17,13 +17,14 @@ install-docker-ce-packages:
             - docker-ce
             - bash-completion
             - bash-completion-extras
-        - require:
-            - pkgrepo: docker-ce-repo
+    require:
+        - pkgrepo: docker-ce-repo
 
+# I need to build a defaults file and import it - this hash changes a LOT and it should be controlled from a pillar value
 install-bash-completion-docker:
     file.managed:
         - source: https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker
-        - source_hash: 1815000058cb44c4f87373a72d5abef328c95e1729a3f0be178371467fab110b
+        - source_hash: 767a9de833ec8b292a368c628f3d560ae89eaaea0fc672d251e97c053b2fa268
         - name: /etc/bash_completion.d/docker.sh
         - mode: 644
         - user: root
@@ -36,6 +37,7 @@ install-bash-completion-docker:
         - user: root
 
 # the default network (172.17.0.0/16) conflicts with some of CHG's networks - so we change it
+# TODO: this really just ADDS a default network, it doesn't disable the old one, it still has an interface on the box!
 /etc/docker/daemon.json:
     file.managed:
         - source: salt://docker-ce/files/daemon.json
@@ -48,9 +50,9 @@ run-docker-services:
         - enable: True
         - watch:
             - file: /etc/docker/daemon.json
-        - require:
-            - pkgrepo: docker-ce-repo
-            - pkg: install-docker-ce-packages
-            - file: /etc/docker/daemon.json
+    require:
+        - pkgrepo: docker-ce-repo
+        - pkg: install-docker-ce-packages
+        - file: /etc/docker/daemon.json
 
 {% endif %}
