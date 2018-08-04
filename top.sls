@@ -11,7 +11,7 @@ dev:
   'G@kernel:linux and G@env:dev':
     - match: compound
     - linuxos
-  'G@kernel:linux and G@roles:docker-swarm':
+  'G@kernel:linux and G@roles:docker-ce-swarm':
     - match: compound
     - docker-ce-swarm
 
