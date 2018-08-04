@@ -37,10 +37,11 @@ install-bash-completion-docker:
 #}
 
 # this is probably not good security. An alternative is updating the hash in the pillar, like I indicated above. I'm lazy, though.
+# this isn't great, there's still a temp file left, but I've spent too much time working on it already. :)
 install-bash-completion-docker:
   cmd.run:
     - name: curl -s -L https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /etc/bash_completion.d/docker.sh
-    - unless: curl -s -L https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /tmp/docker.sh && cmp -s /etc/bash_completion.d/docker.sh /tmp/docker.sh; retval=$?; if test $retval -eq 0 && rm -f /tmp/docker.sh; exit $retval
+    - unless: curl -s -L https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /tmp/docker.sh && cmp -s /etc/bash_completion.d/docker.sh /tmp/docker.sh
 
 # apparently /etc/docker isn't created till the service runs once, so let's make it now
 /etc/docker:
