@@ -87,7 +87,7 @@ event-new-master-fire:
 
 # previously, we got the token from the mine, but this is not secure
 {% set join_token = salt['mine.get']('G@env:'~ENV~ ' and G@pxt:'~PXT~ ' and G@roles:docker-ce-swarm and G@roles:swarm-master', 'manager_token', expr_form='compound').items()[0][1] %}
-{% set join_ip = salt['mine.get']('G@env:'~ENV~ ' and G@pxt:'~PXT~ ' and G@roles:docker-ce-swarm and G@roles:swarm-master', 'manager_ip', expr_form='compound').items()[0][1][0] %}
+{% set join_ip = salt['mine.get']('G@env:'~ENV~ ' and G@pxt:'~PXT~ ' and G@roles:docker-ce-swarm and G@roles:swarm-master', 'manager_ip', expr_form='compound').items()[0][1] %}
 
 # build commands
 {% set swarm_init_cmd = 'docker swarm join --token ' ~ join_token ~ ' ' ~ join_ip  %}
@@ -97,7 +97,7 @@ event-new-master-fire:
 
 # set join token and IP address from mine
 {% set join_token = salt['mine.get']('G@env:'~ENV~ ' and G@pxt:'~PXT~ ' and G@roles:docker-ce-swarm and G@roles:swarm-master', 'worker_token', expr_form='compound').items()[0][1] %}
-{% set join_ip = salt['mine.get']('G@env:'~ENV~ ' and G@pxt:'~PXT~ ' and G@roles:docker-ce-swarm and G@roles:swarm-master', 'manager_ip', expr_form='compound').items()[0][1][0] %}
+{% set join_ip = salt['mine.get']('G@env:'~ENV~ ' and G@pxt:'~PXT~ ' and G@roles:docker-ce-swarm and G@roles:swarm-master', 'manager_ip', expr_form='compound').items()[0][1] %}
 
 # build commands
 {% set swarm_init_cmd = 'docker swarm join --token ' ~ join_token ~ ' ' ~ join_ip  %}

@@ -50,7 +50,6 @@ install-bash-completion-docker:
         - user: root
 
 # the default network (172.17.0.0/16) conflicts with some of CHG's networks - so we change it
-# TODO: this really just ADDS a default network, it doesn't disable the old one, it still has an interface on the box!
 /etc/docker/daemon.json:
     file.managed:
         - source: salt://docker-ce/files/daemon.json

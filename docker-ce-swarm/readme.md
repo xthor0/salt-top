@@ -125,10 +125,16 @@ salt -C 'G@pxt:gear and G@roles:docker-ce-swarm and G@roles:swarm-master and G@e
 
 ## Check the mine
 <code>
+salt -C 'G@env:prod and G@roles:swarm-manager and G@pxt:gear' mine.get 'G@env:prod and G@roles:swarm-master and G@pxt:gear' manager_ip expr_form=compound
+</code>
+
+If you see output like this:
+
+<code>
 
 </code>
 
-
+The mine is working. If you don't see an IP address, you need to fix your mine calls.
 
 ## Deploy Manager Nodes
 <code>
