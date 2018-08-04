@@ -20,6 +20,10 @@ install-docker-ce-packages:
     require:
         - pkgrepo: docker-ce-repo
 
+{#
+
+2018.08.03 - I got sick of the frequent hash changes, so we just download this with curl. Done.
+
 # I need to build a defaults file and import it - this hash changes a LOT and it should be controlled from a pillar value
 install-bash-completion-docker:
     file.managed:
@@ -29,6 +33,14 @@ install-bash-completion-docker:
         - mode: 644
         - user: root
         - group: root
+
+#}
+
+# this is probably not good security. An alternative is updating the hash in the pillar, like I indicated above. I'm lazy, though.
+install-bash-completion-docker:
+  cmd.run:
+    - name: curl -L https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker > /etc/bash_completion.d/docker.sh
+    - unless: curl -L https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker > /tmp/docker.sh && cmp -s /etc/bash_completion.d/docker.sh /tmp/docker.sh
 
 # apparently /etc/docker isn't created till the service runs once, so let's make it now
 /etc/docker:
