@@ -41,36 +41,26 @@ include:
 # because we don't have the reactor gitfs-backed, I'm going to show what that reactor job does here.
 #
 # in /etc/salt/master.d/reactor.conf, this event is configured:
-  #  - 'chg/docker-ce-swarm/new-master':
-  #   - /srv/reactor/docker-new-master.sls
+  #  - 'custom/docker-ce-swarm/new-master':
+  #   - /srv/salt/reactor/docker-new-master.sls
 # and the contents of that sls file:
 
-{#
-
+{# 
 docker_new_master:
   local.cmd.run:
     - tgt: {{ data['id'] }}
       - arg:
         - 'sleep 5 && systemctl restart salt-minion && salt-call mine.update'
 
+Also - and THIS IS IMPORTANT - secure this mine call! You'll need this in /etc/salt/master.d/mine_calls.conf. Obviously changes based on your minion IDs.
+
+mine_get:
+  swarm-manager-*:
+    - swarm-master*:
+      - manager_token
+      - worker_token
+
 #}
-
-{#
-
-Update: 2018.08.01
-I hate leaving large, commented blocks of code here, but... if I need this event stuff I'd like to use it again.
-
-Turns out, the mine functions expose *ALL* of the IP addresses on an interface. Well, after keepalived installs, you get 2 IPs returned.
-
-No big deal, right? Because the master owns BOTH the IP addresses so the join happens and everything's hunky dory.
-
-Except, when I started deploying this on our prod vmware cluster, keepalived migrated the VIP over to the manager and then the manager couldn't
-join the damn swarm. Sigh.
-
-So, the IP address that managers and workers join will be stored in the pillar along with the swarm tokens. So much for fully automated, eh?
-
-Which means we don't need to manage in this conf file or restart the minion. ce la vie.
-End Update!
 
 # we must also manage in a config file so that the salt mine functions properly
 /etc/salt/minion.d/swarm.conf:
@@ -83,12 +73,11 @@ End Update!
 # put an event on the bus that will fire a reactor on the master
 event-new-master-fire:
   event:
-    - name: chg/docker-ce-swarm/new-master
+    - name: custom/docker-ce-swarm/new-master
     - wait
     - watch:
       - file: /etc/salt/minion.d/swarm.conf
     - order: last
-#}
 
 # build commands for swarm (executed at end of state)
 {% set swarm_init_cmd = 'docker swarm init --advertise-addr ' ~ ip %}
@@ -96,15 +85,9 @@ event-new-master-fire:
 
 {% elif dockerrole == 'swarm-manager' %}
 
-{#
 # previously, we got the token from the mine, but this is not secure
 {% set join_token = salt['mine.get']('G@env:'~ENV~ ' and G@pxt:'~PXT~ ' and G@roles:docker-ce-swarm and G@roles:swarm-master', 'manager_token', expr_form='compound').items()[0][1] %}
 {% set join_ip = salt['mine.get']('G@env:'~ENV~ ' and G@pxt:'~PXT~ ' and G@roles:docker-ce-swarm and G@roles:swarm-master', 'manager_ip', expr_form='compound').items()[0][1][0] %}
-#}
-
-# set join token from pillar, join IP from mine
-{% set join_token = salt['pillar.get']('docker-swarm:lookup:manager_token', {}) %}
-{% set join_ip = salt['pillar.get']('docker-swarm:lookup:master_ip', {}) %}
 
 # build commands
 {% set swarm_init_cmd = 'docker swarm join --token ' ~ join_token ~ ' ' ~ join_ip  %}
@@ -112,16 +95,9 @@ event-new-master-fire:
 
 {% elif dockerrole == 'swarm-worker' %}
 
-{#
-# see previous comments about mine issues
 # set join token and IP address from mine
 {% set join_token = salt['mine.get']('G@env:'~ENV~ ' and G@pxt:'~PXT~ ' and G@roles:docker-ce-swarm and G@roles:swarm-master', 'worker_token', expr_form='compound').items()[0][1] %}
 {% set join_ip = salt['mine.get']('G@env:'~ENV~ ' and G@pxt:'~PXT~ ' and G@roles:docker-ce-swarm and G@roles:swarm-master', 'manager_ip', expr_form='compound').items()[0][1][0] %}
-#}
-
-# set join token from pillar, join IP from mine
-{% set join_token = salt['pillar.get']('docker-swarm:lookup:worker_token', {}) %}
-{% set join_ip = salt['pillar.get']('docker-swarm:lookup:master_ip', {}) %}
 
 # build commands
 {% set swarm_init_cmd = 'docker swarm join --token ' ~ join_token ~ ' ' ~ join_ip  %}
