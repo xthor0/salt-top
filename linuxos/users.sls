@@ -60,5 +60,7 @@ stfu-sudo-file:
     - user: xthor
     - group: xthor
 {% endif %}
+    - contents: ''
+    - contents_newline: False
     - require:
       - user: xthor
