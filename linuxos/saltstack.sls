@@ -19,15 +19,17 @@ salt-latest:
     - mode: 644
 {% endif %}
 
-# ubuntu systems
-{% if grains.get('os', '') == 'Ubuntu' %}
+{% if grains.get('os_family', '') == 'Debian' %}
 salt-latest:
   pkgrepo.absent:
     - ppa: saltstack/salt
 {% endif %}
 
-salt-minion:
-  pkg.installed
+install-salt-minion-pkg:
+  pkg.installed:
+    - salt-minion
+  require: 
+    - pkgrepo: salt-latest
 
 /etc/salt/minion:
   file.managed:

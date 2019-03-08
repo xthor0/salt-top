@@ -12,14 +12,23 @@ add-xthor-user:
     - home: /home/xthor
     - shell: /bin/bash
     - groups:
-{% if grains.get('os', '') == 'CentOS' %}
+{% if grains.get('os_family', '') == 'RedHat' %}
         - wheel
-{% elif grains.get('os', '') == 'Ubuntu' %}
+{% elif grains.get('os_family', '') == 'Debian' %}
         - adm
         - sudo
 {% endif %}
     - password: $6$qHxZmptuNTsdQB9O$OMldY1PUiACWc7JrgNU0jxfe27V0f1a.cT.DOEMuYQxMJwZv8nP9LpfWJrRsh2XflH7/pkzSZm2z9LL9kKkvB1
     - enforce_password: True
+
+# remove pi user if this is Raspbian
+{% if grains.get('os', '') == 'Raspbian' %}
+remove-pi-user:
+  user:
+    - absent
+    - name: pi
+{% endif %}
+
 
 xthor sshkeys:
   ssh_auth.present:
@@ -44,9 +53,9 @@ xthor sshkeys:
 # ok, well, I don't :)
 stfu-sudo-file:
   file.managed:
-{% if grains.get('os', '') == 'CentOS' %}
+{% if grains.get('os_family', '') == 'RedHat' %}
     - name: /var/db/sudo/lectured/xthor
-{% elif grains.get('os', '') == 'Ubuntu' %}
+{% elif grains.get('os_family', '') == 'Debian' %}
     - name: /home/xthor/.sudo_as_admin_successful
     - user: xthor
     - group: xthor

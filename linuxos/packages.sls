@@ -38,5 +38,12 @@ base-install-pkgs:
     - pkgs:
       - screen
       - vim
-      - nmap
+{% endif %}
+
+{% if grains.get('os', '') == 'Raspbian' %}
+base-install-pkgs:
+  pkg.installed:
+    - pkgs:
+      - screen
+      - vim
 {% endif %}
