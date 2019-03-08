@@ -22,7 +22,12 @@ salt-latest:
 {% if grains.get('os_family', '') == 'Debian' %}
 salt-latest:
   pkgrepo.managed:
-    - ppa: saltstack/salt
+    - humanname: SaltStack
+    - name: deb http://repo.saltstack.com/apt/debian/9/amd64/latest stretch main
+    - dist: stretch
+    - file: /etc/apt/sources.list.d/saltstack.list
+    - gpgcheck: 1
+    - key_url: https://repo.saltstack.com/py3/debian/9/amd64/latest/SALTSTACK-GPG-KEY.pub
 {% endif %}
 
 install-salt-minion-pkg:
