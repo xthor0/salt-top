@@ -27,6 +27,7 @@ remove-pi-user:
   user:
     - absent
     - name: pi
+    - purge: True
 {% endif %}
 
 
