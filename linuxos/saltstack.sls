@@ -23,7 +23,11 @@ salt-latest:
 salt-latest:
   pkgrepo.managed:
     - humanname: SaltStack
+    {% if "arm" in salt['grains.get']('cpuarch') %}
+    - name: deb http://repo.saltstack.com/apt/debian/9/armhf/latest stretch main
+    {% else %}
     - name: deb http://repo.saltstack.com/apt/debian/9/amd64/latest stretch main
+    {% endif %}
     - dist: stretch
     - file: /etc/apt/sources.list.d/saltstack.list
     - gpgcheck: 1
