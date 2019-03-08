@@ -27,9 +27,9 @@ salt-latest:
 
 install-salt-minion-pkg:
   pkg.installed:
-    - salt-minion
-  require: 
-    - pkgrepo: salt-latest
+    - name: salt-minion
+    - require: 
+      - pkgrepo: salt-latest
 
 /etc/salt/minion:
   file.managed:
