@@ -35,7 +35,7 @@ salt-latest:
 {% endif %}
 
 install-salt-minion-pkg:
-  pkg.installed:
+  pkg.latest:
     - name: salt-minion
     - require: 
       - pkgrepo: salt-latest
