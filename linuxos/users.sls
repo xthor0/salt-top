@@ -27,6 +27,7 @@ remove-pi-user:
   user:
     - absent
     - name: pi
+    - purge: True
 {% endif %}
 
 
@@ -60,5 +61,7 @@ stfu-sudo-file:
     - user: xthor
     - group: xthor
 {% endif %}
+    - contents: ''
+    - contents_newline: False
     - require:
       - user: xthor
