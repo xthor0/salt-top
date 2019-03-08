@@ -21,7 +21,7 @@ salt-latest:
 
 {% if grains.get('os_family', '') == 'Debian' %}
 salt-latest:
-  pkgrepo.absent:
+  pkgrepo.managed:
     - ppa: saltstack/salt
 {% endif %}
 
