@@ -17,5 +17,7 @@ dev:
   'G@kernel:linux and G@roles:docker-ce-swarm and G@env:dev':
     - match: compound
     - docker-ce-swarm
+  'G@env:dev and G@roles:apcupsd':
+    - apcupsd
 
 ##### TODO: we need a way to target a feature branch...
