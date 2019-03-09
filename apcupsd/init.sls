@@ -1,8 +1,8 @@
-install-apcupsd-pkgs:
-    pkg.installed:
-        - pkgs:
-            - apcupsd
-            - curl
+apcupsd:
+    pkg.installed
+    
+curl:
+    pkg.installed
 
 apccontrol-file:
     file.managed:
