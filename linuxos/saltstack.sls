@@ -3,9 +3,6 @@
 
 # centos systems
 {% if grains.get('os', '') == 'CentOS' %}
-{% if "arm" in salt['grains.get']('cpuarch') %}
-{# we don't want the arm version of centos trying to pull from #}
-{% else %}
 salt-latest:
   pkgrepo.managed:
     - humanname: SaltStack Latest Release Channel for RHEL/Centos $releasever
@@ -20,7 +17,6 @@ salt-latest:
     - user: root
     - group: root
     - mode: 644
-{% endif %}
 {% endif %}
 
 {% if grains.get('os_family', '') == 'Debian' %}
