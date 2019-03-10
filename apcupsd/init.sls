@@ -1,6 +1,6 @@
 install-apcupsd-pkgs:
     pkg.installed:
-        pkgs:
+        - pkgs:
             - apcupsd
             - curl
 
