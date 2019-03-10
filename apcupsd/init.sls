@@ -15,6 +15,17 @@ apccontrol-file:
         - require:
             - install-apcupsd-pkgs
 
+apcupsd-conf-file:
+    file.managed:
+        - name: /etc/apcupsd/apcupsd.conf
+        - source: salt://apcupsd/files/apcupsd_conf.jinja
+        - user: root
+        - group: root
+        - mode: 750
+        - template: jinja
+        - require:
+            - install-apcupsd-pkgs
+
 onbattery-file:
     file.managed:
         - name: /etc/apcupsd/onbattery
@@ -43,3 +54,10 @@ apcupsd-service:
         - enable: True
         - require:
             - install-apcupsd-pkgs
+            - apccontrol-file
+            - apcupsd-conf-file
+            - onbattery-file
+            - offbattery-file
+            - offbattery-file
+        - watch:
+            - apcupsd-conf-file
