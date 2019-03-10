@@ -21,15 +21,18 @@ add-xthor-user:
     - password: $6$qHxZmptuNTsdQB9O$OMldY1PUiACWc7JrgNU0jxfe27V0f1a.cT.DOEMuYQxMJwZv8nP9LpfWJrRsh2XflH7/pkzSZm2z9LL9kKkvB1
     - enforce_password: True
 
-# remove pi user if this is Raspbian
-{% if grains.get('os', '') == 'Raspbian' %}
+# some of the Arm images I use (raspbian, cubox Debian) come with default users I'd like to remove
 remove-pi-user:
   user:
     - absent
     - name: pi
     - purge: True
-{% endif %}
 
+remove-debian-user:
+  user:
+    - absent
+    - name: debian
+    - purge: True
 
 xthor sshkeys:
   ssh_auth.present:
