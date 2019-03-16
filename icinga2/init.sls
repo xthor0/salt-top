@@ -24,8 +24,16 @@ install-icinga2-pkgs:
             - nagios-plugins-procs
             - nagios-plugins-swap
             - nagios-plugins-ssh
+            - nagios-plugins-nrpe
+            - mailx
+            - postfix
         - require:
             - install-icinga2-prereqs
+
+# turn on MTA
+postfix.service:
+    service.running:
+        - enable: True
 
 # fix date.timezone in php.ini
 /etc/opt/rh/rh-php71/php.ini:
@@ -107,6 +115,29 @@ icinga2-create-setup-token:
         - name: icingacli setup token create
         - unless: icingacli setup token show
 
+# bug that needs fixing
+# selinux will prevent access to command file - can't click 'check now'
+
+# this is 
+
+{#
+ 
+# cat icingaweb2fix.te
+
+module icingaweb2fix 1.0;
+
+require {
+	type var_run_t;
+	type httpd_t;
+	class fifo_file { getattr open };
+}
+
+/usr/bin/make -f /usr/share/selinux/devel/Makefile icingaweb2fix.pp
+/usr/sbin/semodule -i icingaweb2fix.pp
+
+I'll have to test this.
+
+#}
 
 # here's how I did this manually!
 
