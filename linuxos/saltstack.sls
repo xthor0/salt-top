@@ -19,15 +19,26 @@ salt-latest:
     - mode: 644
 {% endif %}
 
-# ubuntu systems
-{% if grains.get('os', '') == 'Ubuntu' %}
+{% if grains.get('os_family', '') == 'Debian' %}
 salt-latest:
-  pkgrepo.absent:
-    - ppa: saltstack/salt
+  pkgrepo.managed:
+    - humanname: SaltStack
+    {% if "arm" in salt['grains.get']('cpuarch') %}
+    - name: deb http://repo.saltstack.com/apt/debian/9/armhf/latest stretch main
+    {% else %}
+    - name: deb http://repo.saltstack.com/apt/debian/9/amd64/latest stretch main
+    {% endif %}
+    - dist: stretch
+    - file: /etc/apt/sources.list.d/saltstack.list
+    - gpgcheck: 1
+    - key_url: https://repo.saltstack.com/py3/debian/9/amd64/latest/SALTSTACK-GPG-KEY.pub
 {% endif %}
 
-salt-minion:
-  pkg.installed
+install-salt-minion-pkg:
+  pkg.latest:
+    - name: salt-minion
+    - require: 
+      - pkgrepo: salt-latest
 
 /etc/salt/minion:
   file.managed:

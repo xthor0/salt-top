@@ -29,14 +29,16 @@ epel-install-pkgs:
     - pkgs:
       - bash-completion-extras
       - ncdu
+      - htop
 {% endif %}
 
-# ubuntu stuff
-{% if grains.get('os', '') == 'Ubuntu' %}
+# debian family OS class
+{% if grains.get('os_family', '') == 'Debian' %}
 base-install-pkgs:
   pkg.installed:
     - pkgs:
       - screen
       - vim
-      - nmap
+      - htop
+      - bash-completion
 {% endif %}
