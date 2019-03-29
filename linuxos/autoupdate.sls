@@ -17,6 +17,13 @@ yum-cron-config-file:
         - require:
             - install-yum-cron
 
+enable-mta-service:
+    service.running:
+        - name: postfix
+        - enable: True
+        - require:
+            - install-yum-cron
+
 enable-yum-cron-service:
     service.running:
         - name: yum-cron
