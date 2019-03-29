@@ -43,8 +43,6 @@ enable-nginx-service:
         - mode: 644
         - user: root
         - group: root
-        - require:
-            - pkg: install-nginx-packages
 
 # systemd service for the backend web service
 /etc/systemd/system/backendweb.service:
@@ -62,6 +60,7 @@ start-backend-webservice:
     - enable: True
     - require:
       - file: /etc/systemd/system/backendweb.service
+      - pkg: install-nginx-packages
     - watch:
       - file: /etc/systemd/system/backendweb.service
       - file: /srv/backend.js
