@@ -42,3 +42,9 @@ base-install-pkgs:
       - htop
       - bash-completion
 {% endif %}
+
+{% set roles = salt['grains.get']('roles', []) %}
+{% if "tmux" in roles %}
+tmux:
+  pkg.installed
+{% endif %}

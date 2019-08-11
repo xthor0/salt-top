@@ -68,3 +68,25 @@ stfu-sudo-file:
     - contents_newline: False
     - require:
       - user: xthor
+
+# if we're set up for tmux, drop in config required for those apps
+{% set roles = salt['grains.get']('roles', []) %}
+{% if "tmux" in roles %}
+/home/xthor/.tmux.conf:
+  file.managed:
+    - source: salt://linuxos/files/home/xthor/.tmux.conf
+    - user: xthor
+    - group: xthor
+    - mode: 644
+    - require:
+      - user: xthor
+
+/home/xthor/.bash_profile:
+  file.managed:
+    - source: salt://linuxos/files/home/xthor/.bash_profile
+    - user: xthor
+    - group: xthor
+    - mode: 644
+    - require:
+      - user: xthor
+{% endif %}
