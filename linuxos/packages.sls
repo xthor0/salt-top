@@ -22,6 +22,7 @@ base-install-pkgs:
       - procps-ng
       - util-linux
       - bash-completion
+      - bc
 
 epel-install-pkgs:
   pkg.installed:
@@ -41,6 +42,7 @@ base-install-pkgs:
       - vim
       - htop
       - bash-completion
+      - bc
 {% endif %}
 
 {% set roles = salt['grains.get']('roles', []) %}
