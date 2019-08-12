@@ -75,6 +75,7 @@ stfu-sudo-file:
 /home/xthor/.tmux.conf:
   file.managed:
     - source: salt://linuxos/files/home/xthor/.tmux.conf
+    - template: jinja
     - user: xthor
     - group: xthor
     - mode: 644
