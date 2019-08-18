@@ -9,8 +9,8 @@ virtualbox-yum-repo:
 
 # install the right packages
 virtualbox-centos-deps:
-    pkg.install:
-        pkgs:
+    pkg.installed:
+        - pkgs:
             - kernel-devel
             - kernel-headers
             - gcc
