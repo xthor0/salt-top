@@ -20,5 +20,8 @@ dev:
   'G@env:dev and G@roles:apcupsd':
     - match: compound
     - apcupsd
+  'G@env:dev and G@roles:virtualbox':
+    - match: compound
+    - virtualbox
 
 ##### TODO: we need a way to target a feature branch...
