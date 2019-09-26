@@ -1,6 +1,6 @@
 install-fail2ban-pkg:
   pkg.installed:
-    - fail2ban
+    - name: fail2ban
 
 fail2ban-jail-conf:
   file.managed:
