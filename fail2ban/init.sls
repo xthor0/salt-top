@@ -14,7 +14,7 @@ fail2ban-jail-conf:
 
 fail2ban-service:
   service.running:
-    - name: apcupsd
+    - name: fail2ban
     - enable: True
     - require:
       - install-fail2ban-pkg
