@@ -8,6 +8,8 @@ prod:
     - docker-ce-swarm
   'nagios.american-ins.com':
     - icinga2
+  'vps.hakar.net':
+    - fail2ban
 
 ##### development
 dev:
