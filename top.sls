@@ -8,7 +8,7 @@ prod:
     - docker-ce-swarm
   'nagios.american-ins.com':
     - icinga2
-  'vps.hakar.net':
+  'G@kernel:linux and G@roles:jumpbox and G@env:prod':
     - fail2ban
 
 ##### development
