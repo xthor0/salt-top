@@ -34,6 +34,13 @@ remove-debian-user:
     - name: debian
     - purge: True
 
+# Amazon AMIs for CentOS come with a default user, too
+remove-centos-user:
+  user:
+    - name: centos
+    - absent
+    - purge: True
+
 xthor sshkeys:
   ssh_auth.present:
     - user: xthor
@@ -103,3 +110,4 @@ stfu-sudo-file:
     - mode: 644
     - require:
       - user: xthor
+{% endif %}
