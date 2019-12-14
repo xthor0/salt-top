@@ -81,13 +81,14 @@ stfu-sudo-file:
     - mode: 644
     - require:
       - user: xthor
+{% endif %}
 
 /home/xthor/.bash_profile:
   file.managed:
     - source: salt://linuxos/files/home/xthor/.bash_profile
+    - template: jinja
     - user: xthor
     - group: xthor
     - mode: 644
     - require:
       - user: xthor
-{% endif %}
