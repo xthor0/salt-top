@@ -10,7 +10,7 @@
 sorendition "kg"        # makes screen messages stand out, black on green
 msgwait 2               # default message display is too long
 startup_message off     # boooring!
-version                 # echo version on startup, 'cause it's nice to know
+# version                 # echo version on startup, 'cause it's nice to know
 
 
 # Misc ########################################################################
@@ -23,7 +23,7 @@ defflow off             # try to disable flow control (buggy)
 
 # Scroll-back mode ############################################################
 ignorecase on           # case insensitive search in scroll-back mode
-defscrollback 9999      # default scroll-back buffer is tiny. (no. of lines.)
+defscrollback 999999    # default scroll-back buffer is tiny. (no. of lines.)
 bufferfile $HOME/.screen-exchange  # keep the buffer exchange file out of /tmp
 
 # FIXME: http://stackoverflow.com/questions/994563/integrate-readlines-kill-ring-and-the-x11-clipboard
@@ -45,8 +45,10 @@ defbce "on"
 #screen -t work
 #select 0
 
+# without this command, on my mac, .bash_profile is totally ignored
+shell -$SHELL
 
 # Hardstatus ##################################################################
 # Adds a nice "tabbed" look, kinda long but gracefully pushes the status stuff off-screen if need be
-hardstatus alwayslastline '%{gk}[ %{G}%H %{g}][%= %{wk}%?%-Lw%?%{=b kR}[%{W}%n%f %t%?(%u)%?%{=b kR}]%{= kw}%?%+Lw%?%?%= %{g}][%{Y}%l%{g}]%{=b C}[ %D %m/%d %C%a ]%{W}'
-
+# hardstatus alwayslastline '%{gk}[ %{G}%H %{g}][%= %{wk}%?%-Lw%?%{=b kR}[%{W}%n%f %t%?(%u)%?%{=b kR}]%{= kw}%?%+Lw%?%?%= %{g}][%{Y}%l%{g}]%{=b C}[ %D %m/%d %C%a ]%{W}'
+hardstatus alwayslastline '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}[ %{W}%n*%f%t%?(%u)%?%{r} ]%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'

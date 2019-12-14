@@ -77,8 +77,7 @@ stfu-sudo-file:
       - user: xthor
 
 # if we're set up for tmux, drop in config required for those apps
-{% set roles = salt['grains.get']('roles', []) %}
-{% if "tmux" in roles %}
+{% if "tmux" in salt['grains.get']('roles', []) %}
 /home/xthor/.tmux.conf:
   file.managed:
     - source: salt://linuxos/files/home/xthor/.tmux.conf
@@ -88,10 +87,24 @@ stfu-sudo-file:
     - mode: 644
     - require:
       - user: xthor
+{% endif %}
+
+# if we're set up for screen, drop in .screenrc
+{% if "screen" in salt['grains.get']('roles', []) %}
+/home/xthor/.screenrc:
+  file.managed:
+    - source: salt://linuxos/files/home/xthor/.screenrc
+    - user: xthor
+    - group: xthor
+    - mode: 644
+    - require:
+      - user: xthor
+{% endif %}
 
 /home/xthor/.bash_profile:
   file.managed:
     - source: salt://linuxos/files/home/xthor/.bash_profile
+    - template: jinja
     - user: xthor
     - group: xthor
     - mode: 644
