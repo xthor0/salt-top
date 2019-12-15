@@ -110,4 +110,3 @@ stfu-sudo-file:
     - mode: 644
     - require:
       - user: xthor
-{% endif %}
