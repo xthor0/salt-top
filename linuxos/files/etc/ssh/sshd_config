@@ -14,10 +14,6 @@ AuthorizedKeysFile	.ssh/authorized_keys
 PasswordAuthentication no
 ChallengeResponseAuthentication no
 
-# DO allow passwords, but only from the LAN
-Match Address 10.200.99.0/24
-    PasswordAuthentication yes
-
 # GSSAPI options
 GSSAPIAuthentication yes
 GSSAPICleanupCredentials no
@@ -58,4 +54,9 @@ AcceptEnv XMODIFIERS
 
 # override default of no subsystems
 Subsystem	sftp	/usr/libexec/openssh/sftp-server
+
+# Allow password authentication from LAN
+Match Address 10.200.99.0/24
+    PasswordAuthentication yes
+
 
