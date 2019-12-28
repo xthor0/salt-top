@@ -6,7 +6,7 @@
 {% if grains.get('os_family', '') == 'Debian' %}
 {% set nrpe_user = "nagios" %}
 {% set lib_location = "/usr/lib" %}
-{{% endif %}
+{% endif %}
 
 log_facility=daemon
 debug=0
