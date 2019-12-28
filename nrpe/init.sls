@@ -9,6 +9,8 @@ nrpe-packages:
       - nagios-plugins-swap
       - nagios-plugins-uptime
       - nagios-plugins-ups
+      - nagios-plugins-procs
+      - nagios-plugins-users
 {% elif grains.get('os_family', '') == 'Debian' %}
       - nagios-nrpe-server
       - nagios-plugins-contrib
