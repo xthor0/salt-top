@@ -119,7 +119,7 @@ enable-icinga2-feature-command:
 icinga2-create-setup-token:
     cmd.run:
         - name: icingacli setup token create
-        - unless: test -f /var/run/icinga2/cmd/icinga2.cmd
+        - unless: test -f /var/lib/icinga2/icinga2.state
 
 # manage in all the files we need
 /etc/icinga2/conf.d/commands.conf:
