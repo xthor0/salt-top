@@ -1,0 +1,108 @@
+/*
+managed by saltstack. local edits will be overwritten.
+*/
+
+object Host NodeName {
+  import "generic-host"
+
+  address = "127.0.0.1"
+  address6 = "::1"
+
+  vars.os = "Linux"
+
+  vars.http_vhosts["http"] = {
+    http_uri = "/"
+  }
+
+  vars.http_vhosts["Icinga Web 2"] = {
+    http_uri = "/icingaweb2"
+  }
+
+  vars.disks["disk"] = {
+    /* No parameters. */
+  }
+  vars.disks["disk /"] = {
+    disk_partitions = "/"
+  }
+
+  vars.notification["mail"] = {
+    groups = [ "icingaadmins" ]
+  }
+}
+
+/*
+someday, this will be fully templated to pull all the information from Salt.
+that day is not today.
+*/
+
+object Host "spin.xthorsworld.com" {
+  import "generic-host"
+  check_command = "ping4"
+  address = "spin.xthorsworld.com"
+  vars.notification["mail"] = {
+    groups = [ "icingaadmins" ]
+  }
+  vars.os = "Linux"
+}
+
+object Host "aranya.xthorsworld.com" {
+  import "generic-host"
+  check_command = "ping4"
+  address = "aranya.xthorsworld.com"
+  vars.notification["mail"] = {
+    groups = [ "icingaadmins" ]
+  }
+  vars.os = "Linux"
+}
+
+object Host "brimba.xthorsworld.com" {
+  import "generic-host"
+  check_command = "ping4"
+  address = "brimba.xthorsworld.com"
+  vars.notification["mail"] = {
+    groups = [ "icingaadmins" ]
+  }
+  vars.os = "Linux"
+}
+
+object Host "kusikusi.xthorsworld.com" {
+  import "generic-host"
+  check_command = "ping4"
+  address = "kusikusi.xthorsworld.com"
+  vars.notification["mail"] = {
+    groups = [ "icingaadmins" ]
+  }
+  vars.os = "Linux"
+}
+
+object Host "pajki.xthorsworld.com" {
+  import "generic-host"
+  check_command = "ping4"
+  address = "pajki.xthorsworld.com"
+  vars.notification["mail"] = {
+    groups = [ "icingaadmins" ]
+  }
+  vars.os = "Linux"
+}
+
+object Host "corryn.xthorsworld.com" {
+  import "generic-host"
+  check_command = "ping4"
+  address = "corryn.xthorsworld.com"
+  vars.notification["mail"] = {
+    groups = [ "icingaadmins" ]
+  }
+  vars.os = "Linux"
+}
+
+object Host "nagios.american-ins.com" {
+  import "generic-host"
+  check_command = "ping4"
+  address = "nagios.american-ins.com"
+  vars.notification["mail"] = {
+    groups = [ "icingaadmins" ]
+  }
+  vars.os = "Linux"
+}
+
+
