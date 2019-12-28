@@ -28,7 +28,5 @@ nrpe-config-file:
 nrpe:
   service.running:
     - enable: true
-    - require_in:
-      - nrpe-config-file
     - watch:
       - nrpe-config-file
