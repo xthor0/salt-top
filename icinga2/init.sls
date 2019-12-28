@@ -58,6 +58,12 @@ rh-php71-php-fpm.service:
         - watch:
             - file: /etc/opt/rh/rh-php71/php.ini
 
+# if we want the local Icingaweb2 instance to be able to control itself, this boolean is required
+httpd_can_network_connect:
+  selinux.boolean:
+    - value: True
+    - persist: True
+
 # generate self-signed SSL certificate
 {% if salt['pillar.get']('ssl:C') %}
 generate-self-signed-ssl:
