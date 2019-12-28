@@ -4,6 +4,12 @@ include:
     - .repo
     - .database
 
+# ensure python mysql dependency is present
+python36-mysql:
+  pkg.installed:
+      - require_in:
+          - service: mariadb
+
 # install all the other goodies
 install-icinga2-pkgs:
     pkg.installed:
