@@ -91,7 +91,7 @@ httpd.service:
 # start icinga2 service
 icinga2.service:
     service.running:
-        - enable: Tru
+        - enable: True
         - require:
           - pkg: install-icinga2-pkgs
         - watch:
