@@ -189,6 +189,20 @@ icinga2-create-setup-token:
     - watch_in:
       - icinga2.service
 
+/etc/icinga2/conf.d/services.conf:
+  file.managed:
+    - source: salt://icinga2/files/services.conf
+    - user: icinga
+    - group: icinga
+    - template: jinja
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
+
 /etc/icinga2/scripts/notify_by_pushover.sh:
   file.managed:
     - source: salt://icinga2/files/notify_by_pushover.sh
