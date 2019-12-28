@@ -38,9 +38,8 @@ nrpe-config-file:
 {% set nrpe_service = "nagios-nrpe-server" %}
 {% endif %}
 
-nrpe-service:
+{{ nrpe_service }}:
   service.running:
-    - name: {{ nrpe_service }}
-    - enable: true
+    - enable: True
     - watch:
       - nrpe-config-file
