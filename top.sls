@@ -25,5 +25,8 @@ dev:
   'G@env:dev and G@roles:virtualbox':
     - match: compound
     - virtualbox
+  'G@env:dev and G@roles:icinga2':
+    - match: compound
+    - icinga2
 
 ##### TODO: we need a way to target a feature branch...
