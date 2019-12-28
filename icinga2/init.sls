@@ -130,6 +130,10 @@ icinga2-create-setup-token:
     - mode: 640
     - after:
       - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
 /etc/icinga2/conf.d/notifications.conf:
   file.managed:
@@ -139,6 +143,10 @@ icinga2-create-setup-token:
     - mode: 640
     - after:
       - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
 /etc/icinga2/conf.d/templates.conf:
   file.managed:
@@ -148,6 +156,10 @@ icinga2-create-setup-token:
     - mode: 640
     - after:
       - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
 /etc/icinga2/conf.d/users.conf:
   file.managed:
@@ -158,6 +170,10 @@ icinga2-create-setup-token:
     - mode: 640
     - after:
       - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
 /etc/icinga2/conf.d/hosts.conf:
   file.managed:
@@ -168,6 +184,10 @@ icinga2-create-setup-token:
     - mode: 640
     - after:
       - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
 /etc/icinga2/scripts/notify_by_pushover.sh:
   file.managed:
