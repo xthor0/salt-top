@@ -17,8 +17,6 @@ nrpe-packages:
 nagios-server-ip:
   grains.present:
     - value: 10.200.99.16
-    - require_in:
-      - nrpe-config-file
 
 nrpe-config-file:
   file.managed:
@@ -28,8 +26,10 @@ nrpe-config-file:
     - group: root
     - mode: 755
     - template: jinja
-    - require_in:
+    - require:
         - pkg: nrpe
+    - require:
+        - nagios-server-ip
 
 # we need the name of the nrpe service - which varies by OS type
 {% if grains.get('os_family', '') == 'RedHat' %}
