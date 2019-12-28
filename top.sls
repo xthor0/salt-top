@@ -8,6 +8,8 @@ prod:
     - docker-ce-swarm
   'nagios.american-ins.com':
     - icinga2
+  'ragno.xthorsworld.com':
+    - icinga2
   'G@kernel:linux and G@roles:jumpbox and G@env:prod':
     - fail2ban
 
