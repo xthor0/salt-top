@@ -225,10 +225,10 @@ icinga2-create-setup-token:
 /etc/icingaweb2/modules/monitoring/commandtransports.ini:
   file.managed:
     - source: salt://icinga2/files/commandtransports.ini.jinja
-    - user: icinga
-    - group: icinga
+    - user: apache
+    - group: icingaweb2
     - template: jinja
-    - mode: 640
+    - mode: 660
     - after:
       - install-icinga2-pkgs
       - icinga2-api-setup
