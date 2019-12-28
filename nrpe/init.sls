@@ -1,6 +1,6 @@
 nrpe-packages:
   pkg.installed:
-    pkgs:
+    - pkgs:
 {% if grains.get('os_family', '') == 'RedHat' %}
       - nrpe
       - nagios-plugins-nrpe
