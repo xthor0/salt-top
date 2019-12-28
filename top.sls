@@ -18,6 +18,7 @@ dev:
   'G@kernel:linux and G@env:dev':
     - match: compound
     - linuxos
+    - nrpe
   'G@kernel:linux and G@roles:docker-ce-swarm and G@env:dev':
     - match: compound
     - docker-ce-swarm
