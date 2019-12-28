@@ -14,6 +14,12 @@ nrpe-packages:
       - nagios-plugins-contrib
 {% endif %}
 
+nagios-server-ip:
+  grains.present:
+    - value: 10.200.99.16
+    - require_in:
+      - nrpe-config-file
+
 nrpe-config-file:
   file.managed:
     - name: /etc/nagios/nrpe.cfg
