@@ -244,11 +244,4 @@ icinga2-create-setup-token:
     - group: icinga
     - mode: 750
 
-/etc/icinga2/scripts/notify_by_pushover.sh:
-  file.managed:
-    - source: salt://icinga2/files/notify_by_pushover.sh
-    - user: icinga
-    - group: icinga
-    - mode: 750
-
 
