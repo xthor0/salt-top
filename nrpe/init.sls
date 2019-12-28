@@ -31,8 +31,9 @@ nrpe-config-file:
     - require_in:
         - pkg: nrpe
 
-nrpe:
+nrpe-service:
   service.running:
+    - name: {% if grains.get('os_family', '') == 'RedHat' %}nrpe{% elif grains.get('os_family', '') == 'Debian' %}nagios-nrpe-server{% endif %}
     - enable: true
     - watch:
       - nrpe-config-file
