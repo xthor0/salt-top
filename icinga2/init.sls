@@ -123,51 +123,57 @@ icinga2-create-setup-token:
 
 # manage in all the files we need
 /etc/icinga2/conf.d/commands.conf:
-  - source: salt://icinga2/files/commands.conf
-  - user: icinga
-  - group: icinga
-  - mode: 640
-  - after:
-    - install-icinga2-pkgs
+  file.managed:
+    - source: salt://icinga2/files/commands.conf
+    - user: icinga
+    - group: icinga
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
 
 /etc/icinga2/conf.d/notifications.conf:
-  - source: salt://icinga2/files/notifications.conf
-  - user: icinga
-  - group: icinga
-  - mode: 640
-  - after:
-    - install-icinga2-pkgs
+  file.managed:
+    - source: salt://icinga2/files/notifications.conf
+    - user: icinga
+    - group: icinga
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
 
 /etc/icinga2/conf.d/templates.conf:
-  - source: salt://icinga2/files/templates.conf
-  - user: icinga
-  - group: icinga
-  - mode: 640
-  - after:
-    - install-icinga2-pkgs
+  file.managed:
+    - source: salt://icinga2/files/templates.conf
+    - user: icinga
+    - group: icinga
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
 
 /etc/icinga2/conf.d/users.conf:
-  - source: salt://icinga2/files/users.conf.jinja
-  - user: icinga
-  - group: icinga
-  - template: jinja
-  - mode: 640
-  - after:
-    - install-icinga2-pkgs
+  file.managed:
+    - source: salt://icinga2/files/users.conf.jinja
+    - user: icinga
+    - group: icinga
+    - template: jinja
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
 
 /etc/icinga2/conf.d/hosts.conf:
-  - source: salt://icinga2/files/hosts.conf.jinja
-  - user: icinga
-  - group: icinga
-  - template: jinja
-  - mode: 640
-  - after:
-    - install-icinga2-pkgs
+  file.managed:
+    - source: salt://icinga2/files/hosts.conf.jinja
+    - user: icinga
+    - group: icinga
+    - template: jinja
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
 
 /etc/icinga2/scripts/notify_by_pushover.sh:
-  - source: salt://icinga2/files/notify_by_pushover.sh
-  - user: icinga
-  - group: icinga
-  - mode: 750
+  file.managed:
+    - source: salt://icinga2/files/notify_by_pushover.sh
+    - user: icinga
+    - group: icinga
+    - mode: 750
 
 
