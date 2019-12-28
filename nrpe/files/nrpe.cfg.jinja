@@ -25,3 +25,4 @@ command[check_load]={{ lib_location }}/nagios/plugins/check_load -r -w 1,1,1 -c 
 command[check_disk]={{ lib_location }}/nagios/plugins/check_disk -w 20% -c 10% -p / -p /boot -p /home
 command[check_zombie_procs]={{ lib_location }}/nagios/plugins/check_procs -w 5 -c 10 -s Z
 command[check_total_procs]={{ lib_location }}/nagios/plugins/check_procs -w 150 -c 200
+command[check_swap]={{ lib_location }}/nagios/plugins/check_swap -w 50 -c 25
