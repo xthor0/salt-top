@@ -41,7 +41,9 @@ object Host "alla.xthorsworld.com" {
   address = "alla.xthorsworld.com"
   vars.os = "Linux"
   /* this eventually needs to be applied to EVERYTHING */
-  vars.notification.pushover.groups = "icingaadmins"
+  vars.notification["pushover"] = {
+    groups = [ "icingaadmins" ]
+  }
 }
 
 object Host "spin.xthorsworld.com" {
