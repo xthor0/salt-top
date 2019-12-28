@@ -35,13 +35,19 @@ someday, this will be fully templated to pull all the information from Salt.
 that day is not today.
 */
 
+object Host "alla.xthorsworld.com" {
+  import "generic-host"
+  check_command = "ping4"
+  address = "alla.xthorsworld.com"
+  vars.os = "Linux"
+  /* this eventually needs to be applied to EVERYTHING */
+  host.vars.notification.pushover = "yes"
+}
+
 object Host "spin.xthorsworld.com" {
   import "generic-host"
   check_command = "ping4"
   address = "spin.xthorsworld.com"
-  vars.notification["mail"] = {
-    groups = [ "icingaadmins" ]
-  }
   vars.os = "Linux"
 }
 
@@ -49,9 +55,6 @@ object Host "aranya.xthorsworld.com" {
   import "generic-host"
   check_command = "ping4"
   address = "aranya.xthorsworld.com"
-  vars.notification["mail"] = {
-    groups = [ "icingaadmins" ]
-  }
   vars.os = "Linux"
 }
 
@@ -59,9 +62,6 @@ object Host "brimba.xthorsworld.com" {
   import "generic-host"
   check_command = "ping4"
   address = "brimba.xthorsworld.com"
-  vars.notification["mail"] = {
-    groups = [ "icingaadmins" ]
-  }
   vars.os = "Linux"
 }
 
@@ -69,9 +69,6 @@ object Host "kusikusi.xthorsworld.com" {
   import "generic-host"
   check_command = "ping4"
   address = "kusikusi.xthorsworld.com"
-  vars.notification["mail"] = {
-    groups = [ "icingaadmins" ]
-  }
   vars.os = "Linux"
 }
 
@@ -79,9 +76,6 @@ object Host "pajki.xthorsworld.com" {
   import "generic-host"
   check_command = "ping4"
   address = "pajki.xthorsworld.com"
-  vars.notification["mail"] = {
-    groups = [ "icingaadmins" ]
-  }
   vars.os = "Linux"
 }
 
@@ -89,9 +83,6 @@ object Host "corryn.xthorsworld.com" {
   import "generic-host"
   check_command = "ping4"
   address = "corryn.xthorsworld.com"
-  vars.notification["mail"] = {
-    groups = [ "icingaadmins" ]
-  }
   vars.os = "Linux"
 }
 
@@ -99,9 +90,6 @@ object Host "nagios.american-ins.com" {
   import "generic-host"
   check_command = "ping4"
   address = "nagios.american-ins.com"
-  vars.notification["mail"] = {
-    groups = [ "icingaadmins" ]
-  }
   vars.os = "Linux"
 }
 

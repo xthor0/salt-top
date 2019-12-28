@@ -104,7 +104,7 @@ icinga2.service:
 enable-icinga2-feature-idomysql:
     cmd.run:
         - name: icinga2 feature enable ido-mysql
-        - unless: icinga2 feature list | grep -q '^Enabled.*ido-mysql'
+        - unless: test -f /etc/icinga2/features-enabled/ido-mysql.conf
         - require:
             - file: ido-mysql-conf-file
         - watch:
@@ -114,7 +114,12 @@ enable-icinga2-feature-idomysql:
 enable-icinga2-feature-command:
     cmd.run:
         - name: icinga2 feature enable command
-        - unless: icinga2 feature list | grep -q '^Enabled.*command'
+        - unless: test -f /etc/icinga2/features-enabled/command.conf
+
+icinga2-api-setup:
+    cmd.run:
+        - name: icinga2 api setup
+        - unless: test -f /etc/icinga2/features-enabled/api.conf
 
 icinga2-create-setup-token:
     cmd.run:
@@ -189,6 +194,20 @@ icinga2-create-setup-token:
     - watch_in:
       - icinga2.service
 
+/etc/icinga2/conf.d/api-users.conf:
+  file.managed:
+    - source: salt://icinga2/files/api-users.conf.jinja
+    - user: icinga
+    - group: icinga
+    - template: jinja
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
+
 /etc/icinga2/conf.d/services.conf:
   file.managed:
     - source: salt://icinga2/files/services.conf
@@ -202,6 +221,28 @@ icinga2-create-setup-token:
       - icinga2.service
     - watch_in:
       - icinga2.service
+
+/etc/icingaweb2/modules/monitoring/commandtransports.ini:
+  file.managed:
+    - source: salt://icinga2/files/commandtransports.ini.jinja
+    - user: icinga
+    - group: icinga
+    - template: jinja
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
+      - icinga2-api-setup
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
+
+/etc/icinga2/scripts/notify_by_pushover.sh:
+  file.managed:
+    - source: salt://icinga2/files/notify_by_pushover.sh
+    - user: icinga
+    - group: icinga
+    - mode: 750
 
 /etc/icinga2/scripts/notify_by_pushover.sh:
   file.managed:
