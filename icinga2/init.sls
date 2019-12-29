@@ -58,6 +58,12 @@ rh-php71-php-fpm.service:
         - watch:
             - file: /etc/opt/rh/rh-php71/php.ini
 
+# if we want the local Icingaweb2 instance to be able to control itself, this boolean is required
+httpd_can_network_connect:
+  selinux.boolean:
+    - value: True
+    - persist: True
+
 # generate self-signed SSL certificate
 {% if salt['pillar.get']('ssl:C') %}
 generate-self-signed-ssl:
@@ -91,7 +97,7 @@ httpd.service:
 # start icinga2 service
 icinga2.service:
     service.running:
-        - enable: Tru
+        - enable: True
         - require:
           - pkg: install-icinga2-pkgs
         - watch:
@@ -104,7 +110,7 @@ icinga2.service:
 enable-icinga2-feature-idomysql:
     cmd.run:
         - name: icinga2 feature enable ido-mysql
-        - unless: icinga2 feature list | grep -q '^Enabled.*ido-mysql'
+        - unless: test -f /etc/icinga2/features-enabled/ido-mysql.conf
         - require:
             - file: ido-mysql-conf-file
         - watch:
@@ -114,90 +120,134 @@ enable-icinga2-feature-idomysql:
 enable-icinga2-feature-command:
     cmd.run:
         - name: icinga2 feature enable command
-        - unless: icinga2 feature list | grep -q '^Enabled.*command'
+        - unless: test -f /etc/icinga2/features-enabled/command.conf
+
+icinga2-api-setup:
+    cmd.run:
+        - name: icinga2 api setup
+        - unless: test -f /etc/icinga2/features-enabled/api.conf
 
 icinga2-create-setup-token:
     cmd.run:
         - name: icingacli setup token create
-        - unless: icingacli setup token show
+        - unless: test -f /var/lib/icinga2/icinga2.state
 
-# bug that needs fixing
-# selinux will prevent access to command file - can't click 'check now'
+# manage in all the files we need
+/etc/icinga2/conf.d/commands.conf:
+  file.managed:
+    - source: salt://icinga2/files/commands.conf
+    - user: icinga
+    - group: icinga
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
-# this is 
+/etc/icinga2/conf.d/notifications.conf:
+  file.managed:
+    - source: salt://icinga2/files/notifications.conf
+    - user: icinga
+    - group: icinga
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
-{#
- 
-# cat icingaweb2fix.te
+/etc/icinga2/conf.d/templates.conf:
+  file.managed:
+    - source: salt://icinga2/files/templates.conf
+    - user: icinga
+    - group: icinga
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
-module icingaweb2fix 1.0;
+/etc/icinga2/conf.d/users.conf:
+  file.managed:
+    - source: salt://icinga2/files/users.conf.jinja
+    - user: icinga
+    - group: icinga
+    - template: jinja
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
-require {
-	type var_run_t;
-	type httpd_t;
-	class fifo_file { getattr open };
-}
+/etc/icinga2/conf.d/hosts.conf:
+  file.managed:
+    - source: salt://icinga2/files/hosts.conf.jinja
+    - user: icinga
+    - group: icinga
+    - template: jinja
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
-/usr/bin/make -f /usr/share/selinux/devel/Makefile icingaweb2fix.pp
-/usr/sbin/semodule -i icingaweb2fix.pp
+/etc/icinga2/conf.d/api-users.conf:
+  file.managed:
+    - source: salt://icinga2/files/api-users.conf.jinja
+    - user: icinga
+    - group: icinga
+    - template: jinja
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
-I'll have to test this.
+/etc/icinga2/conf.d/services.conf:
+  file.managed:
+    - source: salt://icinga2/files/services.conf
+    - user: icinga
+    - group: icinga
+    - template: jinja
+    - mode: 640
+    - after:
+      - install-icinga2-pkgs
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
-#}
+/etc/icingaweb2/modules/monitoring/commandtransports.ini:
+  file.managed:
+    - source: salt://icinga2/files/commandtransports.ini.jinja
+    - user: apache
+    - group: icingaweb2
+    - template: jinja
+    - mode: 660
+    - after:
+      - install-icinga2-pkgs
+      - icinga2-api-setup
+    - require_in:
+      - icinga2.service
+    - watch_in:
+      - icinga2.service
 
-# here's how I did this manually!
-
-{#
-rpm -ivh https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
-yum install epel-release
-yum install icinga2 mariadb-server mariadb icinga2-ido-mysql httpd mod_ssl centos-release-scl nagios-plugins\*
-yum install icingaweb2-selinux icingaweb2 icingacli
-
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/pki/tls/private/localhost.key -out /etc/pki/tls/certs/localhost.crt
--- I think Salt can do this easier - this asks questions...
-
-edit /etc/opt/rh/rh-php71/php.ini: date.timezone = "America/Denver"
-
-systemctl start rh-php71-php-fpm.service
-systemctl enable rh-php71-php-fpm.service
-
-systemctl enable icinga2
-systemctl start icinga2
-systemctl enable mariadb
-systemctl start mariadb
-
-systemctl enable httpd
-systemctl start httpd
-
-icinga2 feature enable command
-icinga2 feature enable ido-mysql
-
-mysql_secure_installation
-
-# mysql -u root -p
-
-CREATE DATABASE icinga;
-CREATE DATABASE icingaweb2;
-
-GRANT ALL ON icinga.* TO 'icinga'@'localhost' IDENTIFIED BY 'cut3p@ss';
-GRANT ALL ON icinga.* TO 'icingaweb2'@'localhost' IDENTIFIED BY 'cut3p@ss';
-
-quit
-
-mysql -u root -p icinga < /usr/share/icinga2-ido-mysql/schema/mysql.sql
-
-The package provides a new configuration file that is installed in /etc/icinga2/features-available/ido-mysql.conf. You can update the database credentials in this file.
-vim /etc/icinga2/features-enabled/ido-mysql.conf - change user/password
-
-icinga2 feature enable ido-mysql
-# said it was already enabled, so... maybe we don't need this
-
-systemctl restart icinga2
-
-icingacli setup config directory --group icingaweb2;
-icingacli setup token create;
--- now paste the token here when prompted: https://localhost:8443/icingaweb2/setup
+/etc/icinga2/scripts/notify_by_pushover.sh:
+  file.managed:
+    - source: salt://icinga2/files/notify_by_pushover.sh
+    - user: icinga
+    - group: icinga
+    - mode: 750
 
 
-
-#}
