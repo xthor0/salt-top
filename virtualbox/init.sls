@@ -20,6 +20,6 @@ virtualbox-centos-deps:
 # now, install VirtualBox...
 vbox6inst:
     pkg.installed:
-        - name: VirtualBox-6.0
+        - name: VirtualBox-6.1
         - require:
             - virtualbox-yum-repo
