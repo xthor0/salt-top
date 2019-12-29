@@ -32,5 +32,5 @@ command[check_total_procs]={{ lib_location }}/nagios/plugins/check_procs -w 150 
 command[check_swap]={{ lib_location }}/nagios/plugins/check_swap -w 50 -c 25
 {% else %}
 command[check_swap]=echo No swap to check; exit 0
-{% fi %}
+{% endif %}
 
