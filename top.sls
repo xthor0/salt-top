@@ -14,6 +14,9 @@ prod:
     - icinga2
   'G@kernel:linux and G@roles:jumpbox and G@env:prod':
     - fail2ban
+  'G@env:prod and G@roles:virtualbox':
+    - match: compound
+    - virtualbox
 
 ##### development
 dev:
