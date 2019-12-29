@@ -7,8 +7,9 @@ prod:
   'G@kernel:linux and G@roles:docker-ce-swarm and G@env:prod':
     - match: compound
     - docker-ce-swarm
-  'nagios.american-ins.com':
-    - icinga2
+  # unfortunately, this is now broken.
+  #  'nagios.american-ins.com':
+  #    - icinga2
   'ragno.xthorsworld.com':
     - icinga2
   'G@kernel:linux and G@roles:jumpbox and G@env:prod':
