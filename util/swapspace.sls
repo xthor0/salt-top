@@ -11,7 +11,8 @@
     - persist: true
 
 configure_swappiness:
-  file.append:
+  file.managed:
     - name: /etc/sysctl.conf
-    - text: vm.swappiness = 10
+    - contents: |
+      vm.swappiness = 10
 
