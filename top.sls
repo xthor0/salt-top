@@ -3,6 +3,7 @@ prod:
   'G@kernel:linux and G@env:prod':
     - match: compound
     - linuxos
+    - nrpe
   'G@kernel:linux and G@roles:docker-ce-swarm and G@env:prod':
     - match: compound
     - docker-ce-swarm
