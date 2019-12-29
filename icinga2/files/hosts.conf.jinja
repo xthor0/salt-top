@@ -75,7 +75,26 @@ object Host "corryn.xthorsworld.com" {
   address = "corryn.xthorsworld.com"
 }
 
+object Host "voras.xthorsworld.com" {
+  import "remote-linux-host"
+  check_command = "ping4"
+  address = "voras.xthorsworld.com"
+}
+
+object Host "ududo.xthorsworld.com" {
+  import "remote-linux-host"
+  check_command = "ping4"
+  address = "ududo.xthorsworld.com"
+}
+
+/* remote hosts */
 object Host "nagios.american-ins.com" {
+  import "remote-linux-host"
+  check_command = "ping4"
+  address = "nagios.american-ins.com"
+}
+
+object Host "prycop.xthorsworld.com" {
   import "remote-linux-host"
   check_command = "ping4"
   address = "nagios.american-ins.com"
