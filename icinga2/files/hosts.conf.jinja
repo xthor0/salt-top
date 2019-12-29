@@ -38,6 +38,13 @@ object Host "alla.xthorsworld.com" {
   check_command = "ping4"
   address = "alla.xthorsworld.com"
 }
+
+object Host "ubuntutest.xthorsworld.com" {
+  import "remote-linux-host"
+  check_command = "ping4"
+  address = "ubuntutest.xthorsworld.com"
+}
+
 {% else %}
 object Host "spin.xthorsworld.com" {
   import "remote-linux-host"
