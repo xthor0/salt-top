@@ -20,6 +20,8 @@ nagios-server-ip:
   grains.present:
 {% if grains.get('env', '') == 'dev' %}
     - value: 10.200.99.28
+{% elif grains.get('id', '') == 'prycop' or grains.get('id', '') == 'nagios.american-ins.com' %}
+    - value: 166.70.52.67
 {% else %}
     - value: 10.200.99.16
 {% endif %}
