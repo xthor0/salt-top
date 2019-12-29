@@ -12,7 +12,7 @@
 
 configure_swappiness:
   file.managed:
-    - name: /etc/sysctl.conf
-    - contents: |
-      vm.swappiness = 10
+    - name: /etc/sysctl.d/10-swappiness.conf
+    - contents:
+      - vm.swappiness = 10
 
