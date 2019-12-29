@@ -21,11 +21,8 @@ object Host NodeName {
   vars.disks["disk"] = {
     /* No parameters. */
   }
-  vars.disks["disk /"] = {
-    disk_partitions = "/"
-  }
 
-  vars.notification["mail"] = {
+  vars.notification["pushover"] = {
     groups = [ "icingaadmins" ]
   }
 }
@@ -34,7 +31,7 @@ object Host NodeName {
 someday, this will be fully templated to pull all the information from Salt.
 that day is not today.
 */
-
+{% if grains.get('env', '') == 'dev' %}
 object Host "alla.xthorsworld.com" {
   import "generic-host"
   check_command = "ping4"
@@ -44,8 +41,9 @@ object Host "alla.xthorsworld.com" {
   vars.notification["pushover"] = {
     groups = [ "icingaadmins" ]
   }
+  vars.check = "nrpe"
 }
-
+{% else %}
 object Host "spin.xthorsworld.com" {
   import "generic-host"
   check_command = "ping4"
@@ -94,5 +92,4 @@ object Host "nagios.american-ins.com" {
   address = "nagios.american-ins.com"
   vars.os = "Linux"
 }
-
-
+{% endif %}

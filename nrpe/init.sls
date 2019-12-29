@@ -18,7 +18,11 @@ nrpe-packages:
 
 nagios-server-ip:
   grains.present:
+{% if grains.get('env', '') == 'dev' %}
+    - value: 10.200.99.28
+{% else %}
     - value: 10.200.99.16
+{% endif %}
 
 nrpe-config-file:
   file.managed:
