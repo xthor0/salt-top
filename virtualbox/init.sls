@@ -26,3 +26,14 @@ vbox6inst:
         - name: VirtualBox-6.1
         - require:
             - virtualbox-yum-repo
+
+# install vboxmanage bash completion
+# get updates from https://raw.githubusercontent.com/gryf/vboxmanage-bash-completion/master/VBoxManage
+/etc/bash_completion.d/VBoxManage:
+  file.managed:
+    - source: salt://virtualbox/files/VBoxManage
+    - user: root
+    - group: root
+    - mode: 664
+
+# install extpack - to do
