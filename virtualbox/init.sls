@@ -16,6 +16,9 @@ virtualbox-centos-deps:
             - gcc
             - make
             - perl
+            - git
+            - mtools
+            - qemu-img
 
 # now, install VirtualBox...
 vbox6inst:
