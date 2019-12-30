@@ -24,7 +24,7 @@ command[check_users]={{ lib_location }}/nagios/plugins/check_users -w 3 -c 5
 command[check_load]={{ lib_location }}/nagios/plugins/check_load -r -w 1,1,1 -c 2,2,2
 command[check_disk]={{ lib_location }}/nagios/plugins/check_disk -w 20% -c 10% -p / -p /boot -p /home -p /var -p /tmp
 command[check_zombie_procs]={{ lib_location }}/nagios/plugins/check_procs -w 5 -c 10 -s Z
-command[check_total_procs]={{ lib_location }}/nagios/plugins/check_procs -w 150 -c 200
+command[check_total_procs]={{ lib_location }}/nagios/plugins/check_procs -w 260 -c 300
 
 {# this'll change depending on whether or not the system actually has swap #}
 {% set swap_devs = salt['cmd.shell']('swapon --show | wc -l')|int %}
