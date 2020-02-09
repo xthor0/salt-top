@@ -2,7 +2,7 @@ root:
   user:
     - present
     - name: root
-    - password: $6$Pu56_5Bn$a.336eHCjQbysWlHhlGW.5v.y71Su/KnlxJZAcgjj3VntsuC95f3Lli/hLEnccV5WajbUSj6mO4vSltKFc/ma0
+    - password: {{ salt['pillar.get']('shadow:root', {}) }}
     - enforce_password: True
 
 add-xthor-user:
@@ -18,7 +18,7 @@ add-xthor-user:
         - adm
         - sudo
 {% endif %}
-    - password: $6$qHxZmptuNTsdQB9O$OMldY1PUiACWc7JrgNU0jxfe27V0f1a.cT.DOEMuYQxMJwZv8nP9LpfWJrRsh2XflH7/pkzSZm2z9LL9kKkvB1
+    - password: {{ salt['pillar.get']('shadow:xthor', {}) }}
     - enforce_password: True
 
 # some of the Arm images I use (raspbian, cubox Debian) come with default users I'd like to remove
