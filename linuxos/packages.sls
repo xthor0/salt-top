@@ -50,3 +50,7 @@ base-install-pkgs:
 tmux:
   pkg.installed
 {% endif %}
+{% if "git" in roles %}
+git:
+  pkg.installed
+{% endif %}
