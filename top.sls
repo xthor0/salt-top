@@ -5,6 +5,7 @@ prod:
     - linuxos
     - nrpe
   'G@kernel:linux and G@roles:jumpbox and G@env:prod':
+    - match: compound
     - fail2ban
   'G@env:prod and G@roles:apcupsd':
     - match: compound
