@@ -46,7 +46,21 @@ base-install-pkgs:
 {% endif %}
 
 {% set roles = salt['grains.get']('roles', []) %}
+
 {% if "tmux" in roles %}
 tmux:
   pkg.installed
+{% endif %}
+
+{% if "git" in roles %}
+git:
+  pkg.installed
+{% endif %}
+
+{% if "python3" in roles %}
+python3-role-pkgs:
+  pkg.installed:
+    - pkgs:
+        - python3
+        - python3-pip
 {% endif %}

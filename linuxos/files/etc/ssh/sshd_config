@@ -56,7 +56,7 @@ AcceptEnv XMODIFIERS
 Subsystem	sftp	/usr/libexec/openssh/sftp-server
 
 # Allow password authentication from LAN
-Match Address 10.200.99.0/24
+Match Address 10.200.1.0/24
     PasswordAuthentication yes
 
 
