@@ -20,3 +20,6 @@ dev:
   'G@env:dev and G@roles:icinga2':
     - match: compound
     - icinga2
+  'G@env:dev and G@roles:apcupsd':
+    - match: compound
+    - apcupsd
