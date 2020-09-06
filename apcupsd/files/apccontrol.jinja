@@ -26,8 +26,8 @@ SCRIPTSHELL=/usr/bin/sh
 SCRIPTDIR=/etc/apcupsd
 WALL=wall
 
-APPTOKEN="{{ salt['pillar.get']('apcupsd:pusover:apptoken', {}) }}"
-USERTOKEN="{{ salt['pillar.get']('apcupsd:pusover:usertoken', {}) }}"
+APPTOKEN="{{ salt['pillar.get']('apcupsd:pushover:apptoken', 'empty') }}"
+USERTOKEN="{{ salt['pillar.get']('apcupsd:pushover:usertoken', 'empty') }}"
 
 
 export SYSADMIN=root
