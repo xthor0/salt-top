@@ -23,3 +23,6 @@ dev:
   'G@env:dev and G@roles:apcupsd':
     - match: compound
     - apcupsd
+  'G@env:dev and G@roles:libvirt':
+    - match: compound
+    - libvirt
