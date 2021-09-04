@@ -16,17 +16,6 @@ hostsfile-etc-sysconfig-network:
     - repl: HOSTNAME={{ hostname }}
 {% endif %}
 
-/etc/hostname:
-  file.managed:
-    - contents: {{ hostname }}
-    - backup: false
-    - onchanges_in:
-      - cmd: set-fqdn
-hostsfile-{{ fqdn }}-hosts-entry:
-  host.present:
-    - ip: {{ grains.fqdn_ip4 }}
-    - names:
-      - {{ fqdn }}
 hostsfile-set-fqdn:
   cmd.run:
     {% if grains["init"] == "systemd" %}
