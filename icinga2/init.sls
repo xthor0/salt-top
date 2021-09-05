@@ -43,6 +43,8 @@ install-icinga2-pkgs:
     - require:
       - install-icinga2-prereqs
 
+{# commented for debugging
+
 # install selinux package for RHEL OS and families
 # this doesn't work for Rocky. Need an 'and'?
 {% if grains.get('os', '') == 'CentOS' %}
@@ -61,12 +63,12 @@ install-icingaweb2-selinux:
 
 # start php-fpm service
 rh-php71-php-fpm.service:
-    service.running:
-        - enable: True
-        - require:
-            - pkg: install-icinga2-pkgs
-        - watch:
-            - file: /etc/opt/rh/rh-php71/php.ini
+  service.running:
+    - enable: True
+    - require:
+      - pkg: install-icinga2-pkgs
+    - watch:
+      - file: /etc/opt/rh/rh-php71/php.ini
 
 # if we want the local Icingaweb2 instance to be able to control itself, this boolean is required
 httpd_can_network_connect:
@@ -104,10 +106,10 @@ httpd.service:
   service.running:
     - enable: True
     - require:
-        - pkg: install-icinga2-pkgs
+      - pkg: install-icinga2-pkgs
     {% if salt['pillar.get']('ssl:C') %}
     - watch:
-        - cmd: generate-self-signed-ssl
+      - cmd: generate-self-signed-ssl
     {% endif %}
 
 # start icinga2 service
@@ -265,3 +267,5 @@ icinga2-create-setup-token:
     - user: icinga
     - group: icinga
     - mode: 750
+
+#}
