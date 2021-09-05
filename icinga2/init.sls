@@ -241,6 +241,8 @@ icinga2-create-setup-token:
     - user: www-data
     - group: icingaweb2
     - dir_mode: 770
+    - before:
+      - /etc/icingaweb2/modules/monitoring/commandtransports.ini
 
 /etc/icingaweb2/modules/monitoring/commandtransports.ini:
   file.managed:
