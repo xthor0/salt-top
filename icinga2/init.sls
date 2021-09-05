@@ -43,8 +43,6 @@ install-icinga2-pkgs:
     - require:
       - install-icinga2-prereqs
 
-{# commented for debugging
-
 # install selinux package for RHEL OS and families
 # this doesn't work for Rocky. Need an 'and'?
 {% if grains.get('os', '') == 'CentOS' %}
@@ -76,6 +74,8 @@ httpd_can_network_connect:
     - value: True
     - persist: True
 {% endif %}
+
+{# commented for debugging
 
 # turn on MTA
 postfix.service:
