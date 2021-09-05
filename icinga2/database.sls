@@ -14,8 +14,8 @@ ido-mysql-conf-file:
         - source: salt://icinga2/files/ido-mysql.conf
         - name: /etc/icinga2/features-available/ido-mysql.conf
         - template: jinja
-        - user: icinga
-        - group: icinga
+        - user: nagios
+        - group: nagios
         - mode: 640
         - require:
             - pkg: install-icinga2-pkgs
