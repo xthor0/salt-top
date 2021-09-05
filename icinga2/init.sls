@@ -128,9 +128,9 @@ enable-icinga2-feature-idomysql:
     - name: icinga2 feature enable ido-mysql
     - unless: test -f /etc/icinga2/features-enabled/ido-mysql.conf
     - require:
-        - file: ido-mysql-conf-file
+      - file: ido-mysql-conf-file
     - watch:
-        - file: ido-mysql-conf-file
+      - file: ido-mysql-conf-file
 
 # enable command feature
 enable-icinga2-feature-command:
