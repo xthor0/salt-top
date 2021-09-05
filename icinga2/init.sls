@@ -4,13 +4,14 @@ include:
   - .repo
   - .database
 
-{%- if grains['os_family'] == 'Debian' %}
+{% if grains['os_family'] == 'Debian' %}
   {% set apache_package = 'apache2' %}
 {% elif grains['os_family'] == 'Rocky' %}
   {% set apache_package = 'httpd' %}
 {% elif grains['os_family'] == 'RedHat' %}
   {% set apache_package = 'httpd' %}
 {% endif %}
+
 # ensure python mysql dependency is present
 python36-mysql:
   pkg.installed:
@@ -45,7 +46,7 @@ install-icinga2-pkgs:
 # install selinux package for RHEL OS and families
 # this doesn't work for Rocky. Need an 'and'?
 {% if grains.get('os', '') == 'CentOS' %}
-install-icinga2-pkgs:
+install-icingaweb2-selinux:
   pkg.installed:
     - pkgs:
       - icingaweb2-selinux
