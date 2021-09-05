@@ -90,8 +90,9 @@ http-redirect-index:
     - source: salt://icinga2/files/index.html
     - template: jinja
 
-# start httpd
-httpd.service:
+# start web service
+# TODO: fix for CentOS?
+apache2.service:
   service.running:
     - enable: True
     - require:
@@ -143,8 +144,8 @@ icinga2-create-setup-token:
 /etc/icinga2/conf.d/commands.conf:
   file.managed:
     - source: salt://icinga2/files/commands.conf
-    - user: icinga
-    - group: icinga
+    - user: nagios
+    - group: nagios
     - mode: 640
     - after:
       - install-icinga2-pkgs
@@ -156,8 +157,8 @@ icinga2-create-setup-token:
 /etc/icinga2/conf.d/notifications.conf:
   file.managed:
     - source: salt://icinga2/files/notifications.conf
-    - user: icinga
-    - group: icinga
+    - user: nagios
+    - group: nagios
     - mode: 640
     - after:
       - install-icinga2-pkgs
@@ -169,8 +170,8 @@ icinga2-create-setup-token:
 /etc/icinga2/conf.d/templates.conf:
   file.managed:
     - source: salt://icinga2/files/templates.conf
-    - user: icinga
-    - group: icinga
+    - user: nagios
+    - group: nagios
     - mode: 640
     - after:
       - install-icinga2-pkgs
@@ -182,8 +183,8 @@ icinga2-create-setup-token:
 /etc/icinga2/conf.d/users.conf:
   file.managed:
     - source: salt://icinga2/files/users.conf.jinja
-    - user: icinga
-    - group: icinga
+    - user: nagios
+    - group: nagios
     - template: jinja
     - mode: 640
     - after:
@@ -196,8 +197,8 @@ icinga2-create-setup-token:
 /etc/icinga2/conf.d/hosts.conf:
   file.managed:
     - source: salt://icinga2/files/hosts.conf.jinja
-    - user: icinga
-    - group: icinga
+    - user: nagios
+    - group: nagios
     - template: jinja
     - mode: 640
     - after:
@@ -210,8 +211,8 @@ icinga2-create-setup-token:
 /etc/icinga2/conf.d/api-users.conf:
   file.managed:
     - source: salt://icinga2/files/api-users.conf.jinja
-    - user: icinga
-    - group: icinga
+    - user: nagios
+    - group: nagios
     - template: jinja
     - mode: 640
     - after:
@@ -224,8 +225,8 @@ icinga2-create-setup-token:
 /etc/icinga2/conf.d/services.conf:
   file.managed:
     - source: salt://icinga2/files/services.conf
-    - user: icinga
-    - group: icinga
+    - user: nagios
+    - group: nagios
     - template: jinja
     - mode: 640
     - after:
@@ -238,7 +239,7 @@ icinga2-create-setup-token:
 /etc/icingaweb2/modules/monitoring/commandtransports.ini:
   file.managed:
     - source: salt://icinga2/files/commandtransports.ini.jinja
-    - user: apache
+    - user: www-data
     - group: icingaweb2
     - template: jinja
     - mode: 660
@@ -253,6 +254,6 @@ icinga2-create-setup-token:
 /etc/icinga2/scripts/notify_by_pushover.sh:
   file.managed:
     - source: salt://icinga2/files/notify_by_pushover.sh
-    - user: icinga
-    - group: icinga
+    - user: nagios
+    - group: nagios
     - mode: 750
