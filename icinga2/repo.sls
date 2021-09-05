@@ -27,10 +27,15 @@ install-icinga2-prereqs:
 {% if grains.get('os_family', '') == 'Debian' %}
 {% set ocn = grains.get('oscodename', '') %}
 {% set dist = 'icinga-{0} main'.format(ocn) %}
+install-icinga2-prereqs:
+    pkg.installed:
+        - pkgs:
+            - gnupg1
+
 icinga2_repo:
   pkgrepo.managed:
     - humanname: icinga2_official
-    - name: deb http://packages.icinga.org/debian {{ dist }}
+    - name: deb https://packages.icinga.org/debian {{ dist }}
     - file: /etc/apt/sources.list.d/icinga.list
     - key_url: https://packages.icinga.com/icinga.key
 {% endif %}

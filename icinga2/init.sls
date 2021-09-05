@@ -29,7 +29,7 @@ install-icinga2-pkgs:
       - monitoring-plugins
       - vim-icinga2
       - vim-addon-manager
-      - mailx
+      - bsd-mailx
       - postfix
 
 # enable Vim addon
