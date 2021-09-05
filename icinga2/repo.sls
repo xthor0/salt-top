@@ -32,5 +32,5 @@ icinga2_repo:
     - humanname: icinga2_official
     - name: deb http://packages.icinga.org/debian {{ dist }}
     - file: /etc/apt/sources.list.d/icinga.list
-    - key_url: http://packages.icinga.org/icinga.key
+    - key_url: https://packages.icinga.com/icinga.key
 {% endif %}
