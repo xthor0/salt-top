@@ -16,8 +16,8 @@ CentOS:
         password: root
 Debian:
     server_package: mariadb-server
-    client_package: mariadb
-    pymysql: MySQL-python
+    client_package: mariadb-client
+    pymysql: python3-mysqldb
     service: mariadb
     admin: True
     config:
