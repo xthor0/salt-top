@@ -270,11 +270,11 @@ icinga2-create-setup-token:
 Enable apache ssl module:
   apache_module.enabled:
     - name: ssl
-  watch_in:
-    - apache2.service
+    - watch_in:
+      - apache2.service
 
 Enable apache default-ssl site:
   apache_site.enabled:
     - name: default-ssl
-  watch_in:
-    - apache2.service
+    - watch_in:
+      - apache2.service
