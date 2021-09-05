@@ -23,3 +23,14 @@ install-icinga2-prereqs:
             - epel-release
             - centos-release-scl
 {% endif %}
+
+{% if grains.get('os_family', '') == 'Debian' %}
+{% set ocn = grains.get('oscodename', '') %}
+{% set dist = 'icinga-{0} main'.format(ocn) %}
+icinga2_repo:
+  pkgrepo.managed:
+    - humanname: icinga2_official
+    - name: deb http://packages.icinga.org/debian {{ dist }}
+    - file: /etc/apt/sources.list.d/icinga.list
+    - key_url: http://packages.icinga.org/icinga.key
+{% endif %}

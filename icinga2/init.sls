@@ -40,8 +40,6 @@ install-icinga2-pkgs:
       - nagios-plugins-nrpe
       - mailx
       - postfix
-    - require:
-      - install-icinga2-prereqs
 
 # install selinux package for RHEL OS and families
 # this doesn't work for Rocky. Need an 'and'?
