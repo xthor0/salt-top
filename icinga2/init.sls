@@ -75,8 +75,6 @@ httpd_can_network_connect:
     - persist: True
 {% endif %}
 
-{# commented for debugging
-
 # turn on MTA
 postfix.service:
   service.running:
@@ -121,6 +119,8 @@ icinga2.service:
     - watch:
       - cmd: enable-icinga2-feature-idomysql
       - cmd: enable-icinga2-feature-command
+
+{# commented for debugging
 
 # todo: when I'm not sick of this, should probably come from
 # pillar and foreach feature in pillar :)
