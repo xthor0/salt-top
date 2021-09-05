@@ -14,4 +14,19 @@ CentOS:
     master_user:
         username: root
         password: root
+Debian:
+    server_package: mariadb-server
+    client_package: mariadb
+    pymysql: MySQL-python
+    service: mariadb
+    admin: True
+    config:
+        file: /etc/my.cnf
+        sections:
+            mysqld:
+                bind-address: 0.0.0.0
+                port: 3306
+    master_user:
+        username: root
+        password: root
 {% endload %}
