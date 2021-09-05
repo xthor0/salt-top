@@ -6,9 +6,9 @@ include:
 
 {%- if grains['os_family'] == 'Debian' %}
   {% set apache_package = 'apache2' %}
-{% elseif grains['os_family'] == 'Rocky' %}
+{% elif grains['os_family'] == 'Rocky' %}
   {% set apache_package = 'httpd' %}
-{% elseif grains['os_family'] == 'RedHat' %}
+{% elif grains['os_family'] == 'RedHat' %}
   {% set apache_package = 'httpd' %}
 {% endif %}
 # ensure python mysql dependency is present
