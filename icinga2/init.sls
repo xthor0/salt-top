@@ -76,6 +76,7 @@ postfix.service:
 
 # generate self-signed SSL certificate
 # TODO: fix for CentOS, too
+# Debian generates a snakeoil cert, so mebbe we don't need this.
 {% if salt['pillar.get']('ssl:C') %}
 generate-self-signed-ssl:
   cmd.run:
@@ -269,7 +270,11 @@ icinga2-create-setup-token:
 Enable apache ssl module:
   apache_module.enabled:
     - name: ssl
+  watch_in:
+    - apache2.service
 
 Enable apache default-ssl site:
   apache_site.enabled:
     - name: default-ssl
+  watch_in:
+    - apache2.service
