@@ -236,6 +236,12 @@ icinga2-create-setup-token:
     - watch_in:
       - icinga2.service
 
+/etc/icingaweb2/modules/monitoring:
+  file.directory:
+    - user: www-data
+    - group: icingaweb2
+    - dir_mode: 770
+
 /etc/icingaweb2/modules/monitoring/commandtransports.ini:
   file.managed:
     - source: salt://icinga2/files/commandtransports.ini.jinja
