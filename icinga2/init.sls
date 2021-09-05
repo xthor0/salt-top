@@ -80,6 +80,8 @@ postfix.service:
   service.running:
     - enable: True
 
+{# commented for debugging
+
 # generate self-signed SSL certificate
 {% if salt['pillar.get']('ssl:C') %}
 generate-self-signed-ssl:
@@ -91,8 +93,6 @@ generate-self-signed-ssl:
       -out /etc/pki/tls/certs/localhost.crt
     - unless: openssl x509 -noout -subject -in /etc/pki/tls/certs/localhost.crt | grep -q {{ salt['grains.get']('id') }}
 {% endif %}
-
-{# commented for debugging
 
 # manage in a redirect for default website
 http-redirect-index:
