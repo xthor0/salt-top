@@ -94,6 +94,8 @@ generate-self-signed-ssl:
     - unless: openssl x509 -noout -subject -in /etc/pki/tls/certs/localhost.crt | grep -q {{ salt['grains.get']('id') }}
 {% endif %}
 
+#} 
+
 # manage in a redirect for default website
 http-redirect-index:
   file.managed:
@@ -267,5 +269,3 @@ icinga2-create-setup-token:
     - user: icinga
     - group: icinga
     - mode: 750
-
-#}
