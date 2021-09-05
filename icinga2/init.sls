@@ -80,21 +80,13 @@ postfix.service:
   service.running:
     - enable: True
 
-{# commented for debugging
-
 # generate self-signed SSL certificate
 {% if salt['pillar.get']('ssl:C') %}
 generate-self-signed-ssl:
   cmd.run:
-    - name: |
-      openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 \
-      -subj "/C={{ salt['pillar.get']('ssl:C') }}/ST={{ salt['pillar.get']('ssl:ST') }}/L={{ salt['pillar.get']('ssl:L') }}/O={{ salt['pillar.get']('ssl:O') }}/CN={{ salt['grains.get']('id') }}" \
-      -keyout /etc/pki/tls/private/localhost.key \
-      -out /etc/pki/tls/certs/localhost.crt
+    - name: openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 -subj "/C={{ salt['pillar.get']('ssl:C') }}/ST={{ salt['pillar.get']('ssl:ST') }}/L={{ salt['pillar.get']('ssl:L') }}/O={{ salt['pillar.get']('ssl:O') }}/CN={{ salt['grains.get']('id') }}" -keyout /etc/pki/tls/private/localhost.key -out /etc/pki/tls/certs/localhost.crt
     - unless: openssl x509 -noout -subject -in /etc/pki/tls/certs/localhost.crt | grep -q {{ salt['grains.get']('id') }}
 {% endif %}
-
-#} 
 
 # manage in a redirect for default website
 http-redirect-index:
