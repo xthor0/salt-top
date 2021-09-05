@@ -265,3 +265,11 @@ icinga2-create-setup-token:
     - user: nagios
     - group: nagios
     - mode: 750
+
+Enable apache ssl module:
+  apache_module.enabled:
+    - name: ssl
+
+Enable apache default-ssl site:
+  apache_site.enabled:
+    - name: default-ssl
