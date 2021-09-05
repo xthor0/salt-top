@@ -4,19 +4,18 @@ include:
   - .repo
   - .database
 
+# TODO: come back and fix this for CentOS/Rocky. It won't work right now.
+# Gotta build a map or something, to install the right stuff. Because the package
+# names are COMPLETELY different for CentOS vs Debian.
+
 {% if grains['os_family'] == 'Debian' %}
   {% set apache_package = 'apache2' %}
+  {% set nagios_plugins_package = 'apache2' %}
 {% elif grains['os_family'] == 'Rocky' %}
   {% set apache_package = 'httpd' %}
 {% elif grains['os_family'] == 'RedHat' %}
   {% set apache_package = 'httpd' %}
 {% endif %}
-
-# ensure python mysql dependency is present
-python36-mysql:
-  pkg.installed:
-    - require_in:
-      - service: mariadb
 
 # install all the other goodies
 install-icinga2-pkgs:
@@ -26,20 +25,17 @@ install-icinga2-pkgs:
       - icinga2-ido-mysql
       - icingaweb2
       - icingacli
-      - {{ apache_package }}
-      - mod_ssl
-      - nagios-plugins-http
-      - nagios-plugins-ping
-      - nagios-plugins-fping
-      - nagios-plugins-load
-      - nagios-plugins-disk
-      - nagios-plugins-users
-      - nagios-plugins-procs
-      - nagios-plugins-swap
-      - nagios-plugins-ssh
-      - nagios-plugins-nrpe
+      - apache2
+      - monitoring-plugins
+      - vim-icinga2
+      - vim-addon-manager
       - mailx
       - postfix
+
+# enable Vim addon
+{% if grains['os_family'] == 'Debian' %}
+{# vim-addon-manager -w install icinga2 #}
+{% endif %}
 
 # install selinux package for RHEL OS and families
 # this doesn't work for Rocky. Need an 'and'?

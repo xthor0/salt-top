@@ -8,5 +8,5 @@ mariadb_config:
         - source: salt://mariadb/files/my.cnf
         - template: jinja
         - user: root
-        - group: wheel
+        - group: root
         - mode: 0644
