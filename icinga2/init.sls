@@ -92,6 +92,8 @@ generate-self-signed-ssl:
     - unless: openssl x509 -noout -subject -in /etc/pki/tls/certs/localhost.crt | grep -q {{ salt['grains.get']('id') }}
 {% endif %}
 
+{# commented for debugging
+
 # manage in a redirect for default website
 http-redirect-index:
   file.managed:
@@ -119,8 +121,6 @@ icinga2.service:
     - watch:
       - cmd: enable-icinga2-feature-idomysql
       - cmd: enable-icinga2-feature-command
-
-{# commented for debugging
 
 # todo: when I'm not sick of this, should probably come from
 # pillar and foreach feature in pillar :)
