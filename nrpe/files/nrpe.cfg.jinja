@@ -3,6 +3,11 @@
 {% set lib_location = "/usr/lib64" %}
 {% endif %}
 
+{% if grains.get('os_family', '') == 'Rocky' %}
+{% set nrpe_user = "nrpe" %}
+{% set lib_location = "/usr/lib64" %}
+{% endif %}
+
 {% if grains.get('os_family', '') == 'Debian' %}
 {% set nrpe_user = "nagios" %}
 {% set lib_location = "/usr/lib" %}
@@ -14,7 +19,7 @@ pid_file=/var/run/{{ nrpe_user }}/nrpe.pid
 server_port=5666
 nrpe_user={{ nrpe_user }}
 nrpe_group={{ nrpe_user }}
-allowed_hosts=127.0.0.1,::1,{{ salt['grains.get']('nagios-server-ip') }}
+allowed_hosts=127.0.0.1,::1,{{ salt['pillar.get']('icinga2:server_ip') }}
 dont_blame_nrpe=0
 allow_bash_command_substitution=0
 command_timeout=60

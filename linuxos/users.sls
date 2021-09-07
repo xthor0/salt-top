@@ -66,6 +66,8 @@ stfu-sudo-file:
   file.managed:
 {% if grains.get('os_family', '') == 'RedHat' %}
     - name: /var/db/sudo/lectured/xthor
+{% elif grains.get('os_family', '') == 'Rocky' %}
+    - name: /var/db/sudo/lectured/xthor
 {% elif grains.get('os_family', '') == 'Debian' %}
     - name: /home/xthor/.sudo_as_admin_successful
     - user: xthor

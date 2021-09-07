@@ -1,0 +1,22 @@
+// MANAGED BY SALTSTACK -- local modifications WILL be overwritten.
+
+// this will upgrade ANY configured apt source automatically.
+Unattended-Upgrade::Origins-Pattern {
+    "o=*";
+};
+
+Unattended-Upgrade::Package-Blacklist {
+};
+
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+
+Unattended-Upgrade::Automatic-Reboot-WithUsers "true";
+
+// probably need to tweak this to check if UTC or MST
+Unattended-Upgrade::Automatic-Reboot-Time "02:00";
+
+// remove this after testing
+Unattended-Upgrade::Verbose "false";
+
