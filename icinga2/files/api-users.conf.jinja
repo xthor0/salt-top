@@ -1,4 +1,4 @@
 object ApiUser "icingaweb2" {
-  password = "{{ salt['pillar.get']('icinga:apiusers:icingaweb2:password') }}"
+  password = "{{ salt['pillar.get']('icinga2:apiusers:icingaweb2:password') }}"
   permissions = [ "status/query", "actions/*", "objects/modify/*", "objects/query/*" ]
 }

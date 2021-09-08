@@ -1,4 +1,5 @@
 {% if grains.get('os_family', '') == 'RedHat' %}
+{% if grains.get('osmajorrelease', '') == 7 %}
 install-yum-cron:
     pkg.installed:
         - pkgs:
@@ -31,4 +32,28 @@ enable-yum-cron-service:
         - require:
             - install-yum-cron
             - yum-cron-config-file
+{% elif grains.get('osmajorrelease', '') == 8 %}
+{# https://fedoraproject.org/wiki/AutoUpdates - maybe? dnf-automatic? #}
+{% endif %}
+{% elif grains.get('os_family', '') == 'Debian' %}
+unattended-upgrades:
+    pkg.installed
+
+/etc/apt/apt.conf.d/20auto-upgrades:
+    file.managed:
+        - source: salt://linuxos/files/20auto-upgrades
+        - user: root
+        - group: root
+        - mode: 0644
+        - require:
+            - pkg: unattended-upgrades
+
+/etc/apt/apt.conf.d/50unattended-upgrades:
+    file.managed:
+        - source: salt://linuxos/files/50unattended-upgrades
+        - user: root
+        - group: root
+        - mode: 0644
+        - require:
+            - pkg: unattended-upgrades
 {% endif %}

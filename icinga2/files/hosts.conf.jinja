@@ -6,7 +6,6 @@ object Host NodeName {
   import "generic-host"
 
   address = "127.0.0.1"
-  address6 = "::1"
 
   vars.os = "Linux"
 
@@ -27,83 +26,15 @@ object Host NodeName {
   }
 }
 
-/*
-someday, this will be fully templated to pull all the information from Salt.
-that day is not today.
-*/
+{#
+this is a good way to do debugging, if necessary, so I'm keeping it here...
+{%- do salt.log.error('debug: pillar vars: ' + salt['pillar.get']('icinga2:hosts')|json) -%}
+#}
 
-{% if grains.get('env', '') == 'dev' %}
-object Host "alla.xthorsworld.com" {
-  import "remote-linux-host"
+{% for host, vars in salt['pillar.get']('icinga2:hosts').items() %}
+object Host "{{ host }}" {
+  import "{{ vars['template'] }}"
   check_command = "ping4"
-  address = "alla.xthorsworld.com"
+  address = "{{ vars['ip'] }}"
 }
-
-object Host "ubuntutest.xthorsworld.com" {
-  import "remote-linux-host"
-  check_command = "ping4"
-  address = "ubuntutest.xthorsworld.com"
-}
-
-{% else %}
-object Host "spin.xthorsworld.com" {
-  import "remote-linux-host"
-  check_command = "ping4"
-  address = "spin.xthorsworld.com"
-}
-
-object Host "aranya.xthorsworld.com" {
-  import "remote-linux-host"
-  check_command = "ping4"
-  address = "aranya.xthorsworld.com"
-}
-
-object Host "brimba.xthorsworld.com" {
-  import "remote-linux-host"
-  check_command = "ping4"
-  address = "brimba.xthorsworld.com"
-}
-
-object Host "kusikusi.xthorsworld.com" {
-  import "remote-linux-host"
-  check_command = "ping4"
-  address = "kusikusi.xthorsworld.com"
-}
-
-object Host "pajki.xthorsworld.com" {
-  import "remote-linux-host"
-  check_command = "ping4"
-  address = "pajki.xthorsworld.com"
-}
-
-object Host "corryn.xthorsworld.com" {
-  import "remote-linux-host"
-  check_command = "ping4"
-  address = "corryn.xthorsworld.com"
-}
-
-object Host "voras.xthorsworld.com" {
-  import "remote-linux-host"
-  check_command = "ping4"
-  address = "voras.xthorsworld.com"
-}
-
-object Host "ududo.xthorsworld.com" {
-  import "remote-linux-host"
-  check_command = "ping4"
-  address = "ududo.xthorsworld.com"
-}
-
-/* remote hosts */
-object Host "nagios.american-ins.com" {
-  import "remote-linux-host"
-  check_command = "ping4"
-  address = "nagios.american-ins.com"
-}
-
-object Host "prycop.xthorsworld.com" {
-  import "remote-linux-host"
-  check_command = "ping4"
-  address = "prycop.xthorsworld.com"
-}
-{% endif %}
+{% endfor %}
