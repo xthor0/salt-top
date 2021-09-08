@@ -20,6 +20,7 @@ nrpe-packages:
       - nagios-plugins-ups
       - nagios-plugins-procs
       - nagios-plugins-users
+      - perl
 {% elif grains.get('os_family', '') == 'Debian' %}
       - nagios-nrpe-server
       - nagios-plugins-contrib
@@ -45,7 +46,6 @@ check_mem_plugin:
     - mode: 755
 
 # we need the name of the nrpe service - which varies by OS type
-
 {{ nrpe_service }}:
   service.running:
     - enable: True
