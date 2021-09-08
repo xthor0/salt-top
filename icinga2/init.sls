@@ -260,7 +260,7 @@ icinga2-api-setup:
     - source: salt://icinga2/files/check_mem.pl
     - user: root
     - group: root
-    - mode: 750
+    - mode: 755
 
 {% if grains['os_family'] == 'Debian' %}
 Enable apache ssl module:
@@ -285,7 +285,7 @@ icinga2web-autoconfigure:
     - makedirs: True
     - user: {{ apache_user }}
     - group: icingaweb2
-    - dir_mode: 755
+    - dir_mode: 750
     - file_mode: 644
     - before:
       - file: /etc/icingaweb2/modules/monitoring/commandtransports.ini
