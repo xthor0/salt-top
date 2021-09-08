@@ -162,3 +162,14 @@ object CheckCommand "check_nrpe" {
   ]
 }
 
+object CheckCommand "memory" {
+  import "plugin-check-command"
+
+  command = [
+    PluginDir + "/check_mem.pl",
+    "-C",
+    "-u",
+    "-w 80",
+    "-c 90" 
+  ]
+}

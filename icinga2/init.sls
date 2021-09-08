@@ -255,6 +255,13 @@ icinga2-api-setup:
     - group: {{ icinga_local_user }}
     - mode: 750
 
+/usr/lib/nagios/plugins/check_mem.pl:
+  file.managed:
+    - source: salt://icinga2/files/check_mem.pl
+    - user: root
+    - group: root
+    - mode: 750
+
 {% if grains['os_family'] == 'Debian' %}
 Enable apache ssl module:
   apache_module.enabled:
