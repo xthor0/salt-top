@@ -3,11 +3,13 @@
 {% set phpini = '/etc/php/7.4/apache2/php.ini' %}
 {% set apache_user = 'www-data' %}
 {% set apache_service = 'apache2' %}
+{% set plugin_dir = "/usr/lib/nagios/plugins" %}
 {% set icinga_local_user = 'nagios' %}
 {% if grains['os_family'] in [ 'RedHat', 'Rocky' ] %}
 {% set apache_user = 'apache' %}
 {% set apache_service = 'httpd' %}
 {% set icinga_local_user = 'icinga' %}
+{% set plugin_dir = "/usr/lib64/nagios/plugins" %}
 {% if grains.get('osmajorrelease', '') == 7 %}
 {% set phpini = '/etc/opt/rh/rh-php71/php.ini' %}
 {% else %}
@@ -255,7 +257,7 @@ icinga2-api-setup:
     - group: {{ icinga_local_user }}
     - mode: 750
 
-/usr/lib/nagios/plugins/check_mem.pl:
+{{ plugin_dir }}/check_mem.pl:
   file.managed:
     - source: salt://icinga2/files/check_mem.pl
     - user: root
