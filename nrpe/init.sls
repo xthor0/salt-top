@@ -7,7 +7,6 @@
 {% set plugin_dir = "/usr/lib/nagios/plugins" %}
 {% endif %}
 
-
 nrpe-packages:
   pkg.installed:
     - pkgs:
@@ -37,8 +36,9 @@ nrpe-config-file:
     - require:
         - pkg: nrpe-packages
 
-{{ plugin_dir }}/check_mem.pl:
+check_mem_plugin:
   file.managed:
+    - name: {{ plugin_dir }}/check_mem.pl
     - source: salt://icinga2/files/check_mem.pl
     - user: root
     - group: root
