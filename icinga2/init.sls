@@ -285,7 +285,7 @@ icinga2web-autoconfigure:
     - makedirs: True
     - user: {{ apache_user }}
     - group: icingaweb2
-    - dir_mode: 750
+    - dir_mode: 755
     - file_mode: 644
     - before:
       - file: /etc/icingaweb2/modules/monitoring/commandtransports.ini
