@@ -50,7 +50,8 @@ unattended-upgrades:
 
 /etc/apt/apt.conf.d/50unattended-upgrades:
     file.managed:
-        - source: salt://linuxos/files/50unattended-upgrades
+        - source: salt://linuxos/files/50unattended-upgrades.jinja
+        - template: jinja
         - user: root
         - group: root
         - mode: 0644
