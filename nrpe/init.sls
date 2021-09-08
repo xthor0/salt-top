@@ -24,6 +24,7 @@ nrpe-packages:
 {% elif grains.get('os_family', '') == 'Debian' %}
       - nagios-nrpe-server
       - nagios-plugins-contrib
+      - monitoring-plugins-basic
 {% endif %}
 
 nrpe-config-file:
