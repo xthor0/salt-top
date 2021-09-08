@@ -101,7 +101,7 @@ icingaweb2-sql-file-user:
             /* thanks for being stupid, bash - sigh. otherwise I coulda done this with mysql -e. */
             INSERT INTO `icingaweb_user` (name, active, password_hash) VALUES ('{{ salt['pillar.get']('icinga2:icingaweb2:username') }}', 1, '{{ salt['pillar.get']('icinga2:icingaweb2:hashed_password') }}');
             INSERT INTO `icingaweb_group` (name) VALUES ('Administrators');
-            INSERT INTO `icingaweb_group_membership` (group_id,username) VALUES (1,'admin');
+            INSERT INTO `icingaweb_group_membership` (group_id,username) VALUES (1,'{{ salt['pillar.get']('icinga2:icingaweb2:username') }}');
             INSERT INTO `icingaweb_user_preference` (username,section,name,value) VALUES ('{{ salt['pillar.get']('icinga2:icingaweb2:username') }}','icingaweb','auto_refresh','1'),('{{ salt['pillar.get']('icinga2:icingaweb2:username') }}','icingaweb','show_application_state_messages','system'),('{{ salt['pillar.get']('icinga2:icingaweb2:username') }}','icingaweb','show_benchmark','0'),('{{ salt['pillar.get']('icinga2:icingaweb2:username') }}','icingaweb','show_stacktraces','1'),('{{ salt['pillar.get']('icinga2:icingaweb2:username') }}','icingaweb','theme','solarized-dark');
 
 icingaweb2-user-load:
