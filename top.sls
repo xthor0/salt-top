@@ -16,6 +16,9 @@ prod:
   'G@env:prod and G@roles:libvirt':
     - match: compound
     - libvirt
+  'G@env:prod and G@roles:unifi':
+    - match: compound
+    - unifi
 
 ##### development
 dev:
