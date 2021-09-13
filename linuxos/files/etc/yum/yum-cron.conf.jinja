@@ -25,7 +25,7 @@ apply_updates = yes
 # times that multiple systems will access update servers.  If
 # random_sleep is 0 or negative, the program will run immediately.
 # 6*60 = 360
-random_sleep = 360
+random_sleep = {{ random_sleep }}
 
 
 [emitters]
@@ -38,7 +38,7 @@ system_name = None
 # to have cron send the messages.  If emit_via includes email, this
 # program will send email itself according to the configured options.
 # If emit_via is None or left blank, no messages will be sent.
-emit_via = email
+emit_via = None
 
 # The width, in characters, that messages that are emitted should be
 # formatted to.
@@ -47,13 +47,13 @@ ouput_width = 80
 
 [email]
 # The address to send email messages from.
-email_from = yumupdates@{{ salt['grains.get']('fqdn') }}
+#email_from = yumupdates@{{ salt['grains.get']('fqdn') }}
 
 # List of addresses to send messages to.
-email_to = xthor@xthorsworld.com
+#email_to = xthor@xthorsworld.com
 
 # Name of the host to connect to to send email messages.
-email_host = localhost
+#email_host = localhost
 
 
 [groups]
