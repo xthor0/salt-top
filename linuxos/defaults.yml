@@ -1,0 +1,10 @@
+# debian stuff
+reboot_time: "02:00"
+download_time: "23:00"
+update_time: "00:00"
+randomized_delay: "1h"
+
+# rhel stuff
+update_time_crontab: "0 0 * * *"
+reboot_time_crontab: "0 2 * * *"
+random_sleep: 60

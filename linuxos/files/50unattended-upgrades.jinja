@@ -12,17 +12,15 @@ Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
 
 Unattended-Upgrade::Remove-Unused-Dependencies "true";
 
-{%- if 'libvirt' in grains.get('roles', []) %}
-// not rebooting automatically because this server has salt grain role of 'libvirt'
-Unattended-Upgrade::Automatic-Reboot "false";
-{% else %}
 Unattended-Upgrade::Automatic-Reboot "true";
 Unattended-Upgrade::Automatic-Reboot-WithUsers "true";
 
-// probably need to tweak this to check if UTC or MST
-Unattended-Upgrade::Automatic-Reboot-Time "02:00";
-{% endif %}
+Unattended-Upgrade::Automatic-Reboot-Time "{{ autoupdates.reboot_time }}";
 
-// remove this after testing
 Unattended-Upgrade::Verbose "false";
 
+// automatically upgrade packages with newer versions of config files - but do NOT replace those files, instead use the old version
+Dpkg::Options {
+   "--force-confdef";
+   "--force-confold";
+};
