@@ -29,5 +29,5 @@ command[check_users]={{ lib_location }}/nagios/plugins/check_users -w 3 -c 5
 command[check_load]={{ lib_location }}/nagios/plugins/check_load -r -w 1,1,1 -c 2,2,2
 command[check_disk]={{ lib_location }}/nagios/plugins/check_disk -w 20% -c 10% -p / -p /boot -p /home -p /var -p /tmp
 command[check_zombie_procs]={{ lib_location }}/nagios/plugins/check_procs -w 5 -c 10 -s Z
-command[check_total_procs]={{ lib_location }}/nagios/plugins/check_procs -w 260 -c 300
+command[check_total_procs]={{ lib_location }}/nagios/plugins/check_procs -w 500 -c 600
 command[check_mem]={{ lib_location }}/nagios/plugins/check_mem.pl -C -u -w 80 -c 90
