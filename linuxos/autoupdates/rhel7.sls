@@ -33,7 +33,7 @@ yum-cron-config-file:
     file.managed:
         - contents: |
             # This file intentionally disabled by SaltStack. Local modifications will be lost!
-            {{ autoupdates.reboot_time_crontab }} root /usr/bin/needs-restarting -r 2>&1 logger -t yum-reboot; if test ${PIPESTATUS[0]} -eq 1; then logger -t yum-reboot rebooting now; reboot; fi
+            {{ autoupdates.reboot_time_crontab }} root /usr/bin/needs-restarting -r 2>&1 | logger -t yum-reboot; if test ${PIPESTATUS[0]} -eq 1; then logger -t yum-reboot rebooting now; /sbin/reboot; fi
 
 enable-yum-cron-service:
     service.running:
