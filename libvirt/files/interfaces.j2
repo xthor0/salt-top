@@ -1,0 +1,84 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+allow-hotplug eno1
+iface eno1 inet manual
+
+auto br0
+iface br0 inet static
+	address {{ grains['ipv4'][0] }}/24
+	gateway 10.200.1.1
+	bridge_ports eno1
+	bridge_stp off
+	bridge_fd 0
+	bridge_maxwait 0
+	# dns-* options are implemented by the resolvconf package, if installed
+	dns-nameservers {{ grains['dns']['nameservers'][0] }} # needs work, output and format with spaces
+	dns-search {{ grains['dns']['search'][0] }}
+
+auto eno1.50
+iface eno1.50 inet manual
+	vlan-raw-device eno1
+
+auto br-vlan50
+iface br-vlan50 inet manual
+	bridge_ports eno1.50
+	bridge_stp on
+	bridge_maxwait 10
+
+auto eno1.51
+iface eno1.51 inet manual
+	vlan-raw-device eno1
+
+auto br-vlan51
+iface br-vlan51 inet manual
+	bridge_ports eno1.51
+	bridge_stp on
+	bridge_maxwait 10
+
+auto eno1.52
+iface eno1.52 inet manual
+	vlan-raw-device eno1
+
+auto br-vlan52
+iface br-vlan52 inet manual
+	bridge_ports eno1.52
+	bridge_stp on
+	bridge_maxwait 10
+
+auto eno1.53
+iface eno1.53 inet manual
+	vlan-raw-device eno1
+
+auto br-vlan53
+iface br-vlan53 inet manual
+	bridge_ports eno1.53
+	bridge_stp on
+	bridge_maxwait 10
+
+auto eno1.54
+iface eno1.54 inet manual
+	vlan-raw-device eno1
+
+auto br-vlan54
+iface br-vlan54 inet manual
+	bridge_ports eno1.54
+	bridge_stp on
+	bridge_maxwait 10
+
+auto eno1.55
+iface eno1.55 inet manual
+	vlan-raw-device eno1
+
+auto br-vlan55
+iface br-vlan55 inet manual
+	bridge_ports eno1.55
+	bridge_stp on
+	bridge_maxwait 10
