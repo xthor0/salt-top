@@ -22,7 +22,7 @@ icinga-stable-release:
 {% set ocn = grains.get('oscodename', '') %}
 {% set dist = 'icinga-{0} main'.format(ocn) %}
     - humanname: icinga2_official
-    - name: deb https://packages.icinga.org/debian {{ dist }}
+    - name: deb https://packages.icinga.com/debian {{ dist }}
     - file: /etc/apt/sources.list.d/icinga.list
     - key_url: https://packages.icinga.com/icinga.key
 {% endif %}
