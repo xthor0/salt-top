@@ -10,6 +10,7 @@ libvirt:
         - cockpit
         - cockpit-machines
         - virt-install
+        - libguestfs-tools-c
   service.running:
     - name: libvirtd
     - require:
@@ -66,4 +67,4 @@ cloud_img_mount:
     - mode: 755
 
 
-# TODO: template out /etc/network/interfaces? Not sure if it'll work
+# TODO: manage networking with saltstack: https://docs.saltproject.io/en/latest/ref/states/all/salt.states.network.html
