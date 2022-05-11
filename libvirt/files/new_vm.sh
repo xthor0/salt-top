@@ -165,10 +165,10 @@ EOF
 # TODO: salt-ify the user-data file... somehow
 # jesus, cloud-localds is only a Debian thing...
 #sudo cloud-localds -H ${host_name} -d qcow2 ${ci_image} /home/xthor/ci/user-data
-dd if=/dev/zero of=${ci_image} count=1 bs=1M && mkfs.vfat -n cidata ${CLOUDINIT_IMG}
+sudo dd if=/dev/zero of=${ci_image} count=1 bs=1M && sudo mkfs.vfat -n cidata ${CLOUDINIT_IMG}
 if [ $? -eq 0 ]; then
 	# stuff in the user-data and meta-data files
-	mcopy -i ${ci_image} /tmp/meta-data :: && mcopy -i ${ci_image} /tmp/user-data ::
+	sudo mcopy -i ${ci_image} /tmp/meta-data :: && sudo mcopy -i ${ci_image} /tmp/user-data ::
 	if [ $? -ne 0 ]; then
 		echo "Error: could not mcopy user-data or meta-data to ${ci_image}. Exiting."
 		exit 255
