@@ -1,3 +1,26 @@
+{% if grains['os_family'] in [ 'RedHat', 'Rocky' ] %}
+{% if grains.get('osmajorrelease', '') == 8 %}
+libvirt-dnf-module:
+  cmd.run:
+    - name: dnf module install virt
+    - unless: sudo dnf module --installed list | grep -qw virt
+libvirt:
+  pkg.installed:
+    - pkgs:
+        - cockpit
+        - cockpit-machines
+        - virt-install
+  service.running:
+    - name: libvirtd
+    - require:
+      - pkg: libvirt
+      - cmd: libvirt-dnf-module
+  service.running:
+    - name: cockpit.socket
+    - require:
+      - pkg: libvirt
+{% endif %} # osmajorrelease end if
+{% elif grains.get('os_family', '') == 'Debian' %}
 libvirt:
   pkg.installed:
     - pkgs:
@@ -16,6 +39,7 @@ libvirt:
     - name: libvirtd
     - require:
       - pkg: libvirt
+{% endif %} # grains os_family end if
 
 # drop gagamba's public key in root ssh authorized_keys
 sshkeys:
@@ -29,3 +53,5 @@ sshkeys:
 # TODO: template out /etc/network/interfaces? Not sure if it'll work
 
 # also - mount pavuk NFS share so cloud-images can be copied from there instead of using up storage locally
+
+# also also - new_vm.sh 

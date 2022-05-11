@@ -1,10 +1,10 @@
 #!/bin/bash
 
-image_dir=/mnt/pavuk/cloud-images
+image_dir=/mnt/cloudimg
 target_dir=/var/lib/libvirt/images
 
 # default options
-flavor="debian11"
+flavor="rocky8"
 ram=2
 vcpus=1
 storage=10
@@ -20,11 +20,15 @@ function usage() {
 }
 
 # get command-line args
-while getopts "h:f:t:" OPTION; do
+while getopts "h:f:t:s:p:r:m" OPTION; do
 	case $OPTION in
 		h) host_name=${OPTARG};;
 		f) flavor=${OPTARG};;
 		t) network=${OPTARG};;
+		s) storage=${OPTARG};;
+		p) vcpus=${OPTARG};;
+		r) ram=${OPTARG};;
+		m) salted="1";;
 		*) usage;;
 	esac
 done
@@ -52,6 +56,9 @@ case ${flavor} in
     focal) image="${image_dir}/focal-server-cloudimg-amd64.qcow2"; variant="ubuntu20.04";;
     centos7) image="${image_dir}/CentOS-7-x86_64-GenericCloud-2009.qcow2c"; variant="centos7.0";;
     almalinux8) image="${image_dir}/AlmaLinux-8-GenericCloud-latest.x86_64.qcow2"; variant="centos8";;
+    rocky8) image="${image_dir}/Rocky-8-GenericCloud-8.5-20211114.2.x86_64.qcow2"; variant="centos8";;
+    fedoracoreos35) image="${image_dir}/fedora-coreos-35.20211029.3.0-qemu.x86_64.qcow2"; variant="fedora-coreos-stable";;
+    fedora35) image="${image_dir}/Fedora-Cloud-Base-35-1.2.x86_64.qcow2"; variant="fedora33";;
     debian10) image="${image_dir}/debian-10-generic-amd64.qcow2"; variant="debian10";;
     debian11) image="${image_dir}/debian-11-generic-amd64.qcow2"; variant="debian10";;
     *) bad_taste;;
@@ -66,6 +73,7 @@ fi
 
 # variablize (is that a word?) this so I don't have to type it again in this script
 disk_image=${target_dir}/${host_name}.qcow2
+ci_image=${target_dir}/${host_name}-ci.qcow2
 
 # I HAVE been known to forget to create a flavor on the VM host (with virt-sysprep), so we should... check that.
 test -f ${image}
@@ -89,15 +97,51 @@ if [ $? -eq 0 ]; then
 fi
 
 # copy the disk image to the right location, and then resize it
+echo "Copying ${image} to ${disk_image} and resizing to ${storage}G..."
 sudo cp ${image} ${disk_image} && sudo qemu-img resize ${disk_image} ${storage}G
 if [ $? -ne 0 ]; then
 	echo "Something went wrong either with copying the image, or resizing it -- exiting."
 	exit 255
 fi
 
+# virt-sysprep to set a few things
+echo "Updating host image for ${host_name}..."
+# I really wish I didn't have 2 different freaking commands here, but it's not working right otherwise
+if [ -z "${salted}" ]; then
+	sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --selinux-relabel
+else
+	sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --selinux-relabel --run-command "curl -L https://bootstrap.saltstack.com -o /tmp/install_salt.sh && bash /tmp/install_salt.sh -P -X"
+fi
+if [ $? -ne 0 ]; then
+	echo "Something went wrong with virt-sysprep -- exiting."
+	exit 255
+fi
+
+# create a meta-data file
+#cat << EOF > /tmp/meta-data
+#instance-id: 1
+#local-hostname: ${host_name}
+#EOF
+
+# virt-install older than 3.2 (I think) doesn't support --cloud-init option, which is a bummer
+# TODO: add a check for that!
+#sudo virt-install --virt-type kvm --name ${host_name} --ram ${memory} --vcpus ${vcpus} \
+#	--os-variant ${variant} --network=bridge=${network},model=virtio --graphics vnc \
+#	--disk path=${disk_image},cache=writeback \
+#	--cloud-init root-password-generate=no,disable=on,user-data=/home/xthor/ci/user-data,meta-data=/tmp/meta-data \
+#	--noautoconsole --import
+
+# create ci image
+# TODO: salt-ify the user-data file... somehow
+sudo cloud-localds -H ${host_name} -d qcow2 ${ci_image} /home/xthor/ci/user-data
+
 # kick off virt-install
+echo "Installing VM ${host_name}..."
 sudo virt-install --virt-type kvm --name ${host_name} --ram ${memory} --vcpus ${vcpus} \
 	--os-variant ${variant} --network=bridge=${network},model=virtio --graphics vnc \
 	--disk path=${disk_image},cache=writeback \
-    --sysinfo "type=smbios,system_serial=ds=nocloud-net\;s=http://10.200.54.5/${host_name}/" \
+	--disk path=${ci_image} \
 	--noautoconsole --import
+
+#rm /tmp/meta-data
+exit 0
