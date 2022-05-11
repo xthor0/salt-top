@@ -19,6 +19,15 @@ function usage() {
 	exit 255
 }
 
+# check if tools required by this script are installed
+for x in virt-sysprep mcopy virt-install; do
+	which ${x} >& /dev/null 
+	if [ $? -ne 0 ]; then
+		echo "ERROR: Missing ${x} -- please install."
+		exit 255
+	fi
+done
+
 # get command-line args
 while getopts "h:f:t:s:p:r:m" OPTION; do
 	case $OPTION in
@@ -117,12 +126,6 @@ if [ $? -ne 0 ]; then
 	exit 255
 fi
 
-# create a meta-data file
-#cat << EOF > /tmp/meta-data
-#instance-id: 1
-#local-hostname: ${host_name}
-#EOF
-
 # virt-install older than 3.2 (I think) doesn't support --cloud-init option, which is a bummer
 # TODO: add a check for that!
 #sudo virt-install --virt-type kvm --name ${host_name} --ram ${memory} --vcpus ${vcpus} \
@@ -131,9 +134,49 @@ fi
 #	--cloud-init root-password-generate=no,disable=on,user-data=/home/xthor/ci/user-data,meta-data=/tmp/meta-data \
 #	--noautoconsole --import
 
+# create a meta-data file
+cat << EOF > /tmp/meta-data
+instance-id: 1
+local-hostname: ${host_name}
+EOF
+
+# create user-data file
+cat << EOF > /tmp/user-data
+#cloud-config
+users:
+    - name: root
+      passwd: resetm3n0w
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDSUppn5b2njEQSw8FHqyZ0OZiPD14wEejulwnQ7gxLdQYJEqXMleHx4u/9ff3/jDXoGaBFiT2LmUTnpMV8HSj4jsB4PCoFAbq4XnlnwyBx7va/8LQOMdKsjF5W6peO+DYKh+ow9YaJvctzGPebkkNvhI0YFhZod58uoO7lyTnQXkMm8DXl6q7WhNfsZZiwr7tXicUZojU0msMiDpX1JvhGow+mKym0U/6cMgozypYfNbQ2PVkfNnadslp29O5Mfd5X4U+cbACa1sUYYqOT2Zz8C4t5QFXRY1LNokmRbcqbO01bygbE4S2TDnvRz+XZmfZTuw9MMgp7JPfo6cOfDYKf xthor
+    - name: xthor
+      shell: /bin/bash
+      passwd: p@ssw0rd
+      lock_passwd: false
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDSUppn5b2njEQSw8FHqyZ0OZiPD14wEejulwnQ7gxLdQYJEqXMleHx4u/9ff3/jDXoGaBFiT2LmUTnpMV8HSj4jsB4PCoFAbq4XnlnwyBx7va/8LQOMdKsjF5W6peO+DYKh+ow9YaJvctzGPebkkNvhI0YFhZod58uoO7lyTnQXkMm8DXl6q7WhNfsZZiwr7tXicUZojU0msMiDpX1JvhGow+mKym0U/6cMgozypYfNbQ2PVkfNnadslp29O5Mfd5X4U+cbACa1sUYYqOT2Zz8C4t5QFXRY1LNokmRbcqbO01bygbE4S2TDnvRz+XZmfZTuw9MMgp7JPfo6cOfDYKf xthor
+timezone: America/Denver
+package_upgrade: true
+runcmd:
+    - touch /etc/cloud/cloud-init.disabled
+EOF
+
 # create ci image
 # TODO: salt-ify the user-data file... somehow
-sudo cloud-localds -H ${host_name} -d qcow2 ${ci_image} /home/xthor/ci/user-data
+# jesus, cloud-localds is only a Debian thing...
+#sudo cloud-localds -H ${host_name} -d qcow2 ${ci_image} /home/xthor/ci/user-data
+dd if=/dev/zero of=${ci_image} count=1 bs=1M && mkfs.vfat -n cidata ${CLOUDINIT_IMG}
+if [ $? -eq 0 ]; then
+	# stuff in the user-data and meta-data files
+	mcopy -i ${ci_image} /tmp/meta-data :: && mcopy -i ${ci_image} /tmp/user-data ::
+	if [ $? -ne 0 ]; then
+		echo "Error: could not mcopy user-data or meta-data to ${ci_image}. Exiting."
+		exit 255
+	fi
+else
+	echo "Error: could not create ${ci_image}. Exiting."
+	exit 255
+fi
 
 # kick off virt-install
 echo "Installing VM ${host_name}..."
@@ -143,5 +186,5 @@ sudo virt-install --virt-type kvm --name ${host_name} --ram ${memory} --vcpus ${
 	--disk path=${ci_image} \
 	--noautoconsole --import
 
-#rm /tmp/meta-data
+rm /tmp/meta-data /tmp/user-data
 exit 0
