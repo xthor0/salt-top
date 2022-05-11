@@ -54,5 +54,11 @@ sshkeys:
 # TODO: template out /etc/network/interfaces? Not sure if it'll work
 
 # also - mount pavuk NFS share so cloud-images can be copied from there instead of using up storage locally
+cloud_img_mount:
+  mount.mounted:
+    - name: /mnt/cloudimg
+    - device: pajak.xthorsworld.com:/volume1/cloud-images
+    - mkmnt: True
+    - fstype: nfs 
 
 # also also - new_vm.sh 
