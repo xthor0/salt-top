@@ -2,7 +2,7 @@
 {% if grains.get('osmajorrelease', '') == 8 %}
 libvirt-dnf-module:
   cmd.run:
-    - name: dnf module install virt
+    - name: dnf -y module install virt
     - unless: sudo dnf module --installed list | grep -qw virt
 libvirt:
   pkg.installed:
