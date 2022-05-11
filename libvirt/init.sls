@@ -15,6 +15,7 @@ libvirt:
     - require:
       - pkg: libvirt
       - cmd: libvirt-dnf-module
+cockpit-service:
   service.running:
     - name: cockpit.socket
     - require:
