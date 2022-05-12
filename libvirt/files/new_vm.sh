@@ -119,7 +119,6 @@ echo "Installing VM ${host_name}..."
 sudo virt-install --virt-type kvm --name ${host_name} --ram ${memory} --vcpus ${vcpus} \
 	--os-variant ${variant} --network=bridge=${network},model=virtio --graphics vnc \
 	--disk path=${disk_image},cache=writeback \
-	--disk path=${ci_image} \
 	--sysinfo "system_serial=ds=nocloud-net;h=${host_name};s=http://10.200.54.3/ci/generic/"
 	--noautoconsole --import
 
