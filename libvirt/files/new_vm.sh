@@ -63,9 +63,10 @@ fi
 case ${flavor} in
     bionic) image="${image_dir}/bionic-server-cloudimg-amd64.qcow2"; variant="ubuntu18.04";;
     focal) image="${image_dir}/focal-server-cloudimg-amd64.qcow2"; variant="ubuntu20.04";;
+	jammy) image="${image_dir}/jammy-server-cloudimg-amd64.qcow2"; variant="ubuntu20.04";;
     centos7) image="${image_dir}/CentOS-7-x86_64-GenericCloud-2009.qcow2c"; variant="centos7.0";;
     almalinux8) image="${image_dir}/AlmaLinux-8-GenericCloud-latest.x86_64.qcow2"; variant="centos8";;
-    rocky8) image="${image_dir}/Rocky-8-GenericCloud-8.5-20211114.2.x86_64.qcow2"; variant="centos8";;
+    rocky8) image="${image_dir}/Rocky-8-GenericCloud-8.5-2022-05-11.x86_64.qcow2"; variant="centos8";;
     fedoracoreos35) image="${image_dir}/fedora-coreos-35.20211029.3.0-qemu.x86_64.qcow2"; variant="fedora-coreos-stable";;
     fedora35) image="${image_dir}/Fedora-Cloud-Base-35-1.2.x86_64.qcow2"; variant="fedora33";;
     debian10) image="${image_dir}/debian-10-generic-amd64.qcow2"; variant="debian10";;
@@ -114,17 +115,17 @@ if [ $? -ne 0 ]; then
 fi
 
 # virt-sysprep to set a few things
-echo "Updating host image for ${host_name}..."
+#echo "Updating host image for ${host_name}..."
 # I really wish I didn't have 2 different freaking commands here, but it's not working right otherwise
-if [ -z "${salted}" ]; then
-	sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --selinux-relabel
-else
-	sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --selinux-relabel --run-command "curl -L https://bootstrap.saltstack.com -o /tmp/install_salt.sh && bash /tmp/install_salt.sh -P -X"
-fi
-if [ $? -ne 0 ]; then
-	echo "Something went wrong with virt-sysprep -- exiting."
-	exit 255
-fi
+#if [ -z "${salted}" ]; then
+#	sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --selinux-relabel
+#else
+#	sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --selinux-relabel --run-command "curl -L https://bootstrap.saltstack.com -o /tmp/install_salt.sh && bash /tmp/install_salt.sh -P -X"
+#fi
+#if [ $? -ne 0 ]; then
+#	echo "Something went wrong with virt-sysprep -- exiting."
+#	exit 255
+#fi
 
 # virt-install older than 3.2 (I think) doesn't support --cloud-init option, which is a bummer
 # TODO: add a check for that!
@@ -165,7 +166,7 @@ EOF
 # TODO: salt-ify the user-data file... somehow
 # jesus, cloud-localds is only a Debian thing...
 #sudo cloud-localds -H ${host_name} -d qcow2 ${ci_image} /home/xthor/ci/user-data
-sudo dd if=/dev/zero of=${ci_image} count=1 bs=1M && sudo mkfs.vfat -n cidata ${CLOUDINIT_IMG}
+sudo dd if=/dev/zero of=${ci_image} count=1 bs=1M && sudo mkfs.vfat -n cidata ${ci_image}
 if [ $? -eq 0 ]; then
 	# stuff in the user-data and meta-data files
 	sudo mcopy -i ${ci_image} /tmp/meta-data :: && sudo mcopy -i ${ci_image} /tmp/user-data ::
