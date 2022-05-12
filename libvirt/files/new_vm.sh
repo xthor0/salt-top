@@ -116,7 +116,7 @@ fi
 
 # set the hostname with virt-sysprep
 # why? Because if we don't, my DNS server won't register this VM correctly until we reboot. Dammit.
-
+sudo virt-sysprep -a ${disk_image} --hostname ${host_name}
 
 # kick off virt-install
 echo "Installing VM ${host_name}..."
