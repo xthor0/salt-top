@@ -70,7 +70,7 @@ case ${flavor} in
     fedoracoreos35) image="${image_dir}/fedora-coreos-35.20211029.3.0-qemu.x86_64.qcow2"; variant="fedora-coreos-stable";;
     fedora35) image="${image_dir}/Fedora-Cloud-Base-35-1.2.x86_64.qcow2"; variant="fedora33";;
     debian10) image="${image_dir}/debian-10-generic-amd64.qcow2"; variant="debian10";;
-    debian11) image="${image_dir}/debian-11-generic-amd64.qcow2"; variant="debian10";;
+    debian11) image="${image_dir}/debian-11-generic-amd64-2022-05-11.qcow2"; variant="debian10";;
     *) bad_taste;;
 esac
 
@@ -113,6 +113,10 @@ if [ $? -ne 0 ]; then
 	echo "Something went wrong either with copying the image, or resizing it -- exiting."
 	exit 255
 fi
+
+# set the hostname with virt-sysprep
+# why? Because if we don't, my DNS server won't register this VM correctly until we reboot. Dammit.
+
 
 # kick off virt-install
 echo "Installing VM ${host_name}..."
