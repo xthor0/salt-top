@@ -19,6 +19,11 @@ function usage() {
 	exit 255
 }
 
+function bad_taste() {
+	echo "Error: no flavor named ${flavor} -- exiting."
+	exit 255
+}
+
 # check if tools required by this script are installed
 for x in virt-sysprep mcopy virt-install; do
 	which ${x} >& /dev/null 
@@ -65,12 +70,12 @@ case ${flavor} in
     focal) image="${image_dir}/focal-server-cloudimg-amd64.qcow2"; variant="ubuntu20.04";;
 	jammy) image="${image_dir}/jammy-server-cloudimg-amd64.qcow2"; variant="ubuntu20.04";;
     centos7) image="${image_dir}/CentOS-7-x86_64-GenericCloud-2009.qcow2c"; variant="centos7.0";;
-    almalinux8) image="${image_dir}/AlmaLinux-8-GenericCloud-latest.x86_64.qcow2"; variant="centos8";;
+    alma8) image="${image_dir}/AlmaLinux-8-GenericCloud-latest.x86_64.qcow2"; variant="centos8";;
     rocky8) image="${image_dir}/Rocky-8-GenericCloud-8.5-2022-05-11.x86_64.qcow2"; variant="centos8";;
     fedoracoreos35) image="${image_dir}/fedora-coreos-35.20211029.3.0-qemu.x86_64.qcow2"; variant="fedora-coreos-stable";;
     fedora35) image="${image_dir}/Fedora-Cloud-Base-35-1.2.x86_64.qcow2"; variant="fedora33";;
-    debian10) image="${image_dir}/debian-10-generic-amd64.qcow2"; variant="debian10";;
-    debian11) image="${image_dir}/debian-11-generic-amd64-2022-05-11.qcow2"; variant="debian10";;
+    buster) image="${image_dir}/debian-10-generic-amd64.qcow2"; variant="debian10";;
+    bullseye) image="${image_dir}/debian-11-generic-amd64-2022-05-11.qcow2"; variant="debian10";;
     *) bad_taste;;
 esac
 
@@ -125,12 +130,12 @@ cat << EOF > /tmp/user-data
 #cloud-config
 users:
     - name: root
-      passwd: resetm3n0w
+      plain_text_passwd: resetm3n0w
       ssh_authorized_keys:
         - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDSUppn5b2njEQSw8FHqyZ0OZiPD14wEejulwnQ7gxLdQYJEqXMleHx4u/9ff3/jDXoGaBFiT2LmUTnpMV8HSj4jsB4PCoFAbq4XnlnwyBx7va/8LQOMdKsjF5W6peO+DYKh+ow9YaJvctzGPebkkNvhI0YFhZod58uoO7lyTnQXkMm8DXl6q7WhNfsZZiwr7tXicUZojU0msMiDpX1JvhGow+mKym0U/6cMgozypYfNbQ2PVkfNnadslp29O5Mfd5X4U+cbACa1sUYYqOT2Zz8C4t5QFXRY1LNokmRbcqbO01bygbE4S2TDnvRz+XZmfZTuw9MMgp7JPfo6cOfDYKf xthor
     - name: xthor
       shell: /bin/bash
-      passwd: p@ssw0rd
+      plain_text_passwd: resetm3n0w
       lock_passwd: false
       sudo: ALL=(ALL) NOPASSWD:ALL
       ssh_authorized_keys:
@@ -141,8 +146,11 @@ runcmd:
     - touch /etc/cloud/cloud-init.disabled
 EOF
 
+# cat likes to eat the $ command, so I find it easier
+
 # create ci image
 # sure would be nice if RHEL and their clones had cloud-localds! Or, hell, if virt-install supported --cloud-init (not till v3.2, sadly)
+# TODO: replace this with HTTP call, but I gotta build the state for that server first - use dnsmasq server as example
 sudo dd if=/dev/zero of=${ci_image} count=1 bs=1M && sudo mkfs.vfat -n cidata ${ci_image}
 if [ $? -eq 0 ]; then
 	# stuff in the user-data and meta-data files
