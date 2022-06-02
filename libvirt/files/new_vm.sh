@@ -119,6 +119,14 @@ if [ $? -ne 0 ]; then
 	exit 255
 fi
 
+# virt-sysprep to set a few things
+echo "Updating host image for ${host_name}..."
+sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --selinux-relabel --install qemu-guest-agent
+if [ $? -ne 0 ]; then
+	echo "Something went wrong with virt-sysprep -- exiting."
+	exit 255
+fi
+
 # create a meta-data file
 cat << EOF > /tmp/meta-data
 instance-id: 1
@@ -145,8 +153,6 @@ package_upgrade: true
 runcmd:
     - touch /etc/cloud/cloud-init.disabled
 EOF
-
-# cat likes to eat the $ command, so I find it easier
 
 # create ci image
 # sure would be nice if RHEL and their clones had cloud-localds! Or, hell, if virt-install supported --cloud-init (not till v3.2, sadly)
