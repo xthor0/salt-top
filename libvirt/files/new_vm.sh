@@ -72,8 +72,6 @@ case ${flavor} in
     centos7) image="${image_dir}/CentOS-7-x86_64-GenericCloud-2009.qcow2c"; variant="centos7.0";;
     alma8) image="${image_dir}/AlmaLinux-8-GenericCloud-latest.x86_64.qcow2"; variant="centos8";;
     rocky8) image="${image_dir}/Rocky-8-GenericCloud-8.5-2022-05-11.x86_64.qcow2"; variant="centos8";;
-    fedoracoreos35) image="${image_dir}/fedora-coreos-35.20211029.3.0-qemu.x86_64.qcow2"; variant="fedora-coreos-stable";;
-    fedora35) image="${image_dir}/Fedora-Cloud-Base-35-1.2.x86_64.qcow2"; variant="fedora33";;
     buster) image="${image_dir}/debian-10-generic-amd64.qcow2"; variant="debian10";;
     bullseye) image="${image_dir}/debian-11-generic-amd64-2022-05-11.qcow2"; variant="debian10";;
     *) bad_taste;;

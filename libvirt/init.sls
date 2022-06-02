@@ -55,7 +55,7 @@ sshkeys:
 cloud_img_mount:
   mount.mounted:
     - name: /mnt/cloudimg
-    - device: pajak.xthorsworld.com:/volume1/cloud-images
+    - device: lancah.xthorsworld.com:/storage/cloud-images
     - mkmnt: True
     - fstype: nfs 
 
