@@ -3,10 +3,10 @@
 # where are we storing all the images?
 basedir="/storage/prep/base"
 
-if ! [ -d "${basedir}" ]; then
-    echo "The basedir variable does not exist as a directory. Exiting."
-    exit 2555
-fi
+#if ! [ -d "${basedir}" ]; then
+#    echo "The basedir variable does not exist as a directory. Exiting."
+#    exit 2555
+#fi
 
 function download_and_verify() {
     pushd "${basedir}"
@@ -16,17 +16,15 @@ function download_and_verify() {
 
 # Download all the images. Really only needs to be done once, as no matter how old the image is, virt-sysprep will update it.
 # format: name qcow2_url checksum checksum_type
-declare -a centos7
-centos7[0]="centos7"
-centos7[1]="https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2c"
-centos7[2]="https://cloud.centos.org/centos/7/images/sha256sum.txt"
-centos7[3]="sha256sum"
+declare -A centos7
+centos7[url]="https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2"
+centos7[checksum]="https://cloud.centos.org/centos/7/images/sha256sum.txt"
+centos7[checksum_type]="sha256sum"
 
-declare -a rocky8
-rocky8[0]="rocky8"
-rocky8[1]="https://dl.rockylinux.org/pub/rocky/8.6/images/Rocky-8-GenericCloud.latest.x86_64.qcow2"
-rocky8[2]="https://dl.rockylinux.org/pub/rocky/8.6/images/CHECKSUM"
-rocky8[3]="sha256sum"
+declare -A rocky8
+rocky8[url]="https://dl.rockylinux.org/pub/rocky/8.6/images/Rocky-8-GenericCloud.latest.x86_64.qcow2"
+rocky8[checksum]="https://dl.rockylinux.org/pub/rocky/8.6/images/CHECKSUM"
+rocky8[checksum_type]="sha256sum"
 
 declare -a distros
 distros=(centos7 rocky8)
