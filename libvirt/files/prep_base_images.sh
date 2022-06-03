@@ -16,20 +16,20 @@ function download_and_verify() {
 
 # Download all the images. Really only needs to be done once, as no matter how old the image is, virt-sysprep will update it.
 # format: name qcow2_url checksum checksum_type
+declare -a centos7
+centos7[0]="centos7"
+centos7[1]="https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2c"
+centos7[2]="https://cloud.centos.org/centos/7/images/sha256sum.txt"
+centos7[3]="sha256sum"
+
+declare -a rocky8
+rocky8[0]="rocky8"
+rocky8[1]="https://dl.rockylinux.org/pub/rocky/8.6/images/Rocky-8-GenericCloud.latest.x86_64.qcow2"
+rocky8[2]="https://dl.rockylinux.org/pub/rocky/8.6/images/CHECKSUM"
+rocky8[3]="sha256sum"
+
 declare -a distros
-
-declare -a distros[0]
-distros[0][0]="centos7"
-distros[0][1]="https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2c"
-distros[0][2]="https://cloud.centos.org/centos/7/images/sha256sum.txt"
-distros[0][3]="sha256sum"
-
-declare -a distros[1]
-distros[1][0]="rocky8"
-distros[1][1]="https://dl.rockylinux.org/pub/rocky/8.6/images/Rocky-8-GenericCloud.latest.x86_64.qcow2"
-distros[1][2]="https://dl.rockylinux.org/pub/rocky/8.6/images/CHECKSUM"
-distros[1][3]="sha256sum"
-
+distros=(centos7 rocky8)
 
 notused=(
     
@@ -42,6 +42,7 @@ notused=(
 )
 
 for distro in ${distros[@]}; do
+    echo "Top-level array name: ${distro}"
     for subdist in ${distro[@]}; do
         echo "Distro name: ${subdist[0]}"
         echo "Distro DL URL: ${subdist[1]}"
