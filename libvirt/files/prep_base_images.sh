@@ -16,9 +16,18 @@ function download_and_verify() {
 
 # Download all the images. Really only needs to be done once, as no matter how old the image is, virt-sysprep will update it.
 # format: name qcow2_url checksum checksum_type
-distros=(
-    centos7="https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2c https://cloud.centos.org/centos/7/images/sha256sum.txt sha256sum"
-    rocky8="https://dl.rockylinux.org/pub/rocky/8.6/images/Rocky-8-GenericCloud.latest.x86_64.qcow2 https://dl.rockylinux.org/pub/rocky/8.6/images/CHECKSUM sha256sum"
+declare -a distros
+declare -a distros["centos7"]
+distros["centos7"]["url"]="https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2c"
+distros["centos7"]["checksum"]="https://cloud.centos.org/centos/7/images/sha256sum.txt"
+distros["centos7"]["checksumtype"]="sha256sum"
+distros["rocky8"]["url"]="https://dl.rockylinux.org/pub/rocky/8.6/images/Rocky-8-GenericCloud.latest.x86_64.qcow2"
+distros["rocky8"]["checksum"]="https://dl.rockylinux.org/pub/rocky/8.6/images/CHECKSUM"
+distros["rocky8"]["checksumtype"]="sha256sum"
+
+
+notused=(
+    
     almalinux8="https://repo.almalinux.org/almalinux/8/cloud/x86_64/images/AlmaLinux-8-GenericCloud-latest.x86_64.qcow2 https://repo.almalinux.org/almalinux/8/cloud/x86_64/images/CHECKSUM sha256sum"
     buster="https://cloud.debian.org/images/cloud/buster/latest/debian-10-generic-amd64.qcow2 https://cloud.debian.org/images/cloud/buster/latest/SHA512SUMS sha512sum"
     bullseye="https://cloud.debian.org/images/cloud/bullseye/latest/debian-11-generic-amd64.qcow2 https://cloud.debian.org/images/cloud/bullseye/latest/SHA512SUMS sha512sum"
@@ -29,6 +38,10 @@ distros=(
 
 for distro in ${distros[@]}; do
     echo "${distro}"
+    echo "${distros["${distro}"]}"
+    echo "${distros["${distro}"]["url"]}"
+    echo "${distros["${distro}"]["checksum"]}"
+    echo "${distros["${distro}"]["checksumtype"]}"
 done
 
 # don't do anything below
