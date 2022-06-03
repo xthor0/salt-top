@@ -66,5 +66,11 @@ cloud_img_mount:
     - group: root
     - mode: 755
 
+/usr/local/bin/new_vm.sh:
+  file.managed:
+    - source: salt://libvirt/files/prep_base_images.sh
+    - user: root
+    - group: root
+    - mode: 755
 
 # TODO: manage networking with saltstack: https://docs.saltproject.io/en/latest/ref/states/all/salt.states.network.html
