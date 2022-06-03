@@ -66,7 +66,7 @@ cloud_img_mount:
     - group: root
     - mode: 755
 
-/usr/local/bin/new_vm.sh:
+/usr/local/bin/prep_base_images.sh:
   file.managed:
     - source: salt://libvirt/files/prep_base_images.sh
     - user: root
