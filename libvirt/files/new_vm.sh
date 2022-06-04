@@ -122,6 +122,9 @@ if [ $? -ne 0 ]; then
 	exit 255
 fi
 
+# update the OS to latest, and set the hostname. that way, when it first comes up, DHCP will use the right hostname.
+sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --selinux-relabel
+
 # kick off virt-install
 echo "Installing VM ${host_name}..."
 sudo virt-install --virt-type kvm --name ${host_name} --ram ${memory} --vcpus ${vcpus} \
