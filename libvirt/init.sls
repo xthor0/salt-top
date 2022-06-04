@@ -66,9 +66,9 @@ cloud_img_mount:
     - group: root
     - mode: 755
 
-/usr/local/bin/prep_base_images.sh:
+/usr/local/bin/prep_base_images.py:
   file.managed:
-    - source: salt://libvirt/files/prep_base_images.sh
+    - source: salt://libvirt/files/prep_base_images.py
     - user: root
     - group: root
     - mode: 755

@@ -2,6 +2,7 @@
 
 image_dir=/mnt/cloudimg
 target_dir=/var/lib/libvirt/images
+cloud_init_url="http://10.200.54.5" # TODO: build a VM in DMZ, salt the motherfucker
 
 # default options
 flavor="rocky8"
@@ -66,15 +67,15 @@ fi
 
 # turn the flavor variable into a location for images
 case ${flavor} in
-    bionic) image="${image_dir}/bionic-server-cloudimg-amd64.qcow2"; variant="ubuntu18.04";;
-    focal) image="${image_dir}/focal-server-cloudimg-amd64.qcow2"; variant="ubuntu20.04";;
-	jammy) image="${image_dir}/jammy-server-cloudimg-amd64.qcow2"; variant="ubuntu20.04";;
-    centos7) image="${image_dir}/CentOS-7-x86_64-GenericCloud-2009.qcow2c"; variant="centos7.0";;
-    alma8) image="${image_dir}/AlmaLinux-8-GenericCloud-latest.x86_64.qcow2"; variant="centos8";;
-    rocky8) image="${image_dir}/Rocky-8-GenericCloud-8.5-2022-05-11.x86_64.qcow2"; variant="centos8";;
-    buster) image="${image_dir}/debian-10-generic-amd64.qcow2"; variant="debian10";;
-    bullseye) image="${image_dir}/debian-11-generic-amd64-2022-05-11.qcow2"; variant="debian10";;
-    *) bad_taste;;
+	bionic) image="${image_dir}/standard/bionic.qcow2"; salted_image="${image_dir}/salted/bionic.qcow2"; variant="ubuntu18.04";;
+	focal) image="${image_dir}/standard/focal.qcow2"; salted_image="${image_dir}/salted/focal.qcow2"; variant="ubuntu20.04";;
+	jammy) image="${image_dir}/standard/jammy.qcow2"; salted_image="${image_dir}/salted/jammy.qcow2"; variant="ubuntu20.04";;
+	centos7) image="${image_dir}/standard/centos7.qcow2"; salted_image="${image_dir}/salted/centos7.qcow2"; variant="centos7.0";;
+	alma8) image="${image_dir}/standard/almalinux8.qcow2"; salted_image="${image_dir}/salted/almalinux8.qcow2"; variant="centos8";;
+	rocky8) image="${image_dir}/standard/rocky8.qcow2"; salted_image="${image_dir}/salted/rocky8.qcow2"; variant="centos8";;
+	buster) image="${image_dir}/standard/buster.qcow2"; salted_image="${image_dir}/salted/buster.qcow2"; variant="debian10";;
+	bullseye) image="${image_dir}/standard/bullseye.qcow2"; salted_image="${image_dir}/salted/bullseye.qcow2"; variant="debian10";;
+	*) bad_taste;;
 esac
 
 # network needs to be validated - expected to be a valid bridge interface name
@@ -86,7 +87,11 @@ fi
 
 # variablize (is that a word?) this so I don't have to type it again in this script
 disk_image=${target_dir}/${host_name}.qcow2
-ci_image=${target_dir}/${host_name}-ci.qcow2
+
+# if salted flag is passed, swap out image for salted_image
+if [ -n "${salted}" ]; then
+	image="${salted_image}"
+fi
 
 # I HAVE been known to forget to create a flavor on the VM host (with virt-sysprep), so we should... check that.
 test -f ${image}
@@ -117,66 +122,12 @@ if [ $? -ne 0 ]; then
 	exit 255
 fi
 
-# virt-sysprep to set a few things
-echo "Updating host image for ${host_name}..."
-sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --selinux-relabel --install qemu-guest-agent
-if [ $? -ne 0 ]; then
-	echo "Something went wrong with virt-sysprep -- exiting."
-	exit 255
-fi
-
-# create a meta-data file
-cat << EOF > /tmp/meta-data
-instance-id: 1
-local-hostname: ${host_name}
-EOF
-
-# create user-data file
-cat << EOF > /tmp/user-data
-#cloud-config
-users:
-    - name: root
-      plain_text_passwd: resetm3n0w
-      ssh_authorized_keys:
-        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDSUppn5b2njEQSw8FHqyZ0OZiPD14wEejulwnQ7gxLdQYJEqXMleHx4u/9ff3/jDXoGaBFiT2LmUTnpMV8HSj4jsB4PCoFAbq4XnlnwyBx7va/8LQOMdKsjF5W6peO+DYKh+ow9YaJvctzGPebkkNvhI0YFhZod58uoO7lyTnQXkMm8DXl6q7WhNfsZZiwr7tXicUZojU0msMiDpX1JvhGow+mKym0U/6cMgozypYfNbQ2PVkfNnadslp29O5Mfd5X4U+cbACa1sUYYqOT2Zz8C4t5QFXRY1LNokmRbcqbO01bygbE4S2TDnvRz+XZmfZTuw9MMgp7JPfo6cOfDYKf xthor
-    - name: xthor
-      shell: /bin/bash
-      plain_text_passwd: resetm3n0w
-      lock_passwd: false
-      sudo: ALL=(ALL) NOPASSWD:ALL
-      ssh_authorized_keys:
-        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDSUppn5b2njEQSw8FHqyZ0OZiPD14wEejulwnQ7gxLdQYJEqXMleHx4u/9ff3/jDXoGaBFiT2LmUTnpMV8HSj4jsB4PCoFAbq4XnlnwyBx7va/8LQOMdKsjF5W6peO+DYKh+ow9YaJvctzGPebkkNvhI0YFhZod58uoO7lyTnQXkMm8DXl6q7WhNfsZZiwr7tXicUZojU0msMiDpX1JvhGow+mKym0U/6cMgozypYfNbQ2PVkfNnadslp29O5Mfd5X4U+cbACa1sUYYqOT2Zz8C4t5QFXRY1LNokmRbcqbO01bygbE4S2TDnvRz+XZmfZTuw9MMgp7JPfo6cOfDYKf xthor
-timezone: America/Denver
-package_upgrade: true
-runcmd:
-    - touch /etc/cloud/cloud-init.disabled
-EOF
-
-# create ci image
-# sure would be nice if RHEL and their clones had cloud-localds! Or, hell, if virt-install supported --cloud-init (not till v3.2, sadly)
-# TODO: replace this with HTTP call, but I gotta build the state for that server first - use dnsmasq server as example
-sudo dd if=/dev/zero of=${ci_image} count=1 bs=1M && sudo mkfs.vfat -n cidata ${ci_image}
-if [ $? -eq 0 ]; then
-	# stuff in the user-data and meta-data files
-	sudo mcopy -i ${ci_image} /tmp/meta-data :: && sudo mcopy -i ${ci_image} /tmp/user-data ::
-	if [ $? -ne 0 ]; then
-		echo "Error: could not mcopy user-data or meta-data to ${ci_image}. Exiting."
-		exit 255
-	fi
-else
-	echo "Error: could not create ${ci_image}. Exiting."
-	exit 255
-fi
-
 # kick off virt-install
 echo "Installing VM ${host_name}..."
 sudo virt-install --virt-type kvm --name ${host_name} --ram ${memory} --vcpus ${vcpus} \
 	--os-variant ${variant} --network=bridge=${network},model=virtio --graphics vnc \
 	--disk path=${disk_image},cache=writeback \
-	--disk path=${ci_image} \
+	--sysinfo "system_serial=ds=nocloud-net;h=${host_name};s=${cloud_init_url}/${host_name}/" \
 	--noautoconsole --import
-
-# clean up CI files
-rm /tmp/meta-data /tmp/user-data
 
 exit 0

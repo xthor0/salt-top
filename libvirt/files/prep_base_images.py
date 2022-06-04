@@ -11,8 +11,14 @@ import hashlib
 import requests
 import pprint
 import re
+import subprocess
+import shutil
 
-basedir="/Users/xthor/tmp/imgprep"
+dirs = {}
+dirs['basedir']="/storage/prep"
+dirs['original']="{}/original".format(dirs['basedir'])
+dirs['updated']="{}/updated".format(dirs['basedir'])
+dirs['salted']="{}/salted".format(dirs['basedir'])
 
 distros = {
     'centos7': {
@@ -87,8 +93,6 @@ def validate_checksum(checksum, url, file, type):
     a = urlparse(url)
     filename = os.path.basename(a.path).strip()
 
-    print("Debug: searching for {}".format(filename))
-
     regex = re.compile('{}$'.format(filename))
 
     for line in resp.text.split('\n'):
@@ -115,29 +119,57 @@ def validate_checksum(checksum, url, file, type):
         local_hash = "bullshit"
 
     if local_hash == hash:
-        print("File {} checksum is OK".format(file))
+        return(True)
     else:
-        print("Error: hashes do not match! Local: {} :: Remote: {}".format(local_hash, hash))
+        return(False)
+
+def write_nice_output():
+    print("-=" * int(gtz().columns/2))
+
+
+def virt_sysprep(file, newfile, salt):
+    if salt:
+        shutil.copy(file, newfile)
+        cmdLine = "/usr/bin/virt-sysprep -a {} --network --update --selinux-relabel --install qemu-guest-agent,curl --run-command 'curl -L https://bootstrap.saltstack.com -o /tmp/install_salt.sh && bash /tmp/install_salt.sh -X -x python3'".format(newfile)
+    else:
+        shutil.copy(file, newfile)
+        cmdLine = "/usr/bin/virt-sysprep -a {} --network --update --selinux-relabel --install qemu-guest-agent".format(newfile)
+    print("Running virt-sysprep on file {}".format(newfile))
+    process = subprocess.run(cmdLine, shell=True, check=True)
 
 
 # main? I need to learn Python better
+# do the output directories exist? if not, create them
+for key, dir in dirs.items():
+    check_path = os.path.exists(dir)
+    if not check_path:
+        print("Creating directory: {}".format(dir))
+        os.makedirs(dir)
+
+
 for key, item in distros.items():
     print("Processing distro: {}".format(key))
-    file="{}/{}.qcow2".format(basedir, key)
-    salted_file="{}/{}-salted.qcow2".format(basedir, key)
+    file="{}/{}.qcow2".format(dirs['original'], key)
+    updated_file="{}/{}.qcow2".format(dirs['updated'], key)
+    salted_file="{}/{}.qcow2".format(dirs['salted'], key)
 
     # download
     download_file(item['url'], file)
 
-    # retrieve checksum
-    validate_checksum(item['checksum'], item['url'], file, item['checksum_type'])
+    # retrieve checksum and validate
+    checksum = validate_checksum(item['checksum'], item['url'], file, item['checksum_type'])
+    if checksum:
+        print("Hash validation for file {} passed.".format(file))
+    else:
+        print("Hash validation for {} failed - skipping.".format(file))
+        write_nice_output
+        continue
 
+    # virt-sysprep - but no salt
+    virt_sysprep(file, updated_file, False)
 
-    # extract filename from checksum
-
-
-    # validate hash
-
+    # copy file to -salted and, well, salt it
+    virt_sysprep(file, salted_file, True)
 
     # write some nice user output
-    print("-=" * int(gtz().columns/2))
+    write_nice_output
