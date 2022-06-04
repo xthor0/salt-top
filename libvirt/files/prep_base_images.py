@@ -130,10 +130,10 @@ def write_nice_output():
 def virt_sysprep(file, newfile, salt):
     if salt:
         shutil.copy(file, newfile)
-        cmdLine = "/usr/bin/virt-sysprep -a {} --network --update --selinux-relabel --install qemu-guest-agent,curl --run-command 'curl -L https://bootstrap.saltstack.com -o /tmp/install_salt.sh && bash /tmp/install_salt.sh -X -x python3'".format(newfile)
+        cmdLine = "/usr/bin/virt-sysprep -a {} --network --update --selinux-relabel --install qemu-guest-agent,curl,sudo --run-command 'curl -L https://bootstrap.saltstack.com -o /tmp/install_salt.sh && bash /tmp/install_salt.sh -X -x python3'".format(newfile)
     else:
         shutil.copy(file, newfile)
-        cmdLine = "/usr/bin/virt-sysprep -a {} --network --update --selinux-relabel --install qemu-guest-agent".format(newfile)
+        cmdLine = "/usr/bin/virt-sysprep -a {} --network --update --selinux-relabel --install qemu-guest-agent,sudo".format(newfile)
     print("Running virt-sysprep on file {}".format(newfile))
     process = subprocess.run(cmdLine, shell=True, check=True)
 
