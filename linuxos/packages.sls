@@ -55,6 +55,7 @@ base-install-pkgs:
       - util-linux
       - bash-completion
       - bc
+      - sudo
 
 epel-install-pkgs:
   pkg.installed:
@@ -76,6 +77,7 @@ base-install-pkgs:
       - htop
       - bash-completion
       - bc
+      - sudo
 {% endif %}
 
 {% set roles = salt['grains.get']('roles', []) %}
