@@ -8,7 +8,8 @@ ciweb-packages:
 httpd:
   service.running:
     - enable: True
-    - watch: /etc/httpd/conf.d/override.conf
+    - watch:
+      - /etc/httpd/conf.d/override.conf
 
 htaccess_file:
   file.managed:
