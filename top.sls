@@ -35,3 +35,6 @@ dev:
   'G@env:dev and G@roles:libvirt':
     - match: compound
     - libvirt
+  'G@env:dev and G@roles:ciweb':
+    - match: compound
+    - ciweb
