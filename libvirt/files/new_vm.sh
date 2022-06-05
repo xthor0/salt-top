@@ -1,10 +1,11 @@
 #!/bin/bash
 
-image_dir=/mnt/pavuk/cloud-images
+image_dir=/mnt/cloudimg
 target_dir=/var/lib/libvirt/images
+cloud_init_url="http://10.200.54.5" # TODO: build a VM in DMZ, salt the motherfucker
 
 # default options
-flavor="debian11"
+flavor="rocky8"
 ram=2
 vcpus=1
 storage=10
@@ -19,12 +20,30 @@ function usage() {
 	exit 255
 }
 
+function bad_taste() {
+	echo "Error: no flavor named ${flavor} -- exiting."
+	exit 255
+}
+
+# check if tools required by this script are installed
+for x in virt-sysprep mcopy virt-install; do
+	which ${x} >& /dev/null 
+	if [ $? -ne 0 ]; then
+		echo "ERROR: Missing ${x} -- please install."
+		exit 255
+	fi
+done
+
 # get command-line args
-while getopts "h:f:t:" OPTION; do
+while getopts "h:f:t:s:p:r:m" OPTION; do
 	case $OPTION in
 		h) host_name=${OPTARG};;
 		f) flavor=${OPTARG};;
 		t) network=${OPTARG};;
+		s) storage=${OPTARG};;
+		p) vcpus=${OPTARG};;
+		r) ram=${OPTARG};;
+		m) salted="1";;
 		*) usage;;
 	esac
 done
@@ -48,13 +67,15 @@ fi
 
 # turn the flavor variable into a location for images
 case ${flavor} in
-    bionic) image="${image_dir}/bionic-server-cloudimg-amd64.qcow2"; variant="ubuntu18.04";;
-    focal) image="${image_dir}/focal-server-cloudimg-amd64.qcow2"; variant="ubuntu20.04";;
-    centos7) image="${image_dir}/CentOS-7-x86_64-GenericCloud-2009.qcow2c"; variant="centos7.0";;
-    almalinux8) image="${image_dir}/AlmaLinux-8-GenericCloud-latest.x86_64.qcow2"; variant="centos8";;
-    debian10) image="${image_dir}/debian-10-generic-amd64.qcow2"; variant="debian10";;
-    debian11) image="${image_dir}/debian-11-generic-amd64.qcow2"; variant="debian10";;
-    *) bad_taste;;
+	bionic) image="${image_dir}/standard/bionic.qcow2"; salted_image="${image_dir}/salted/bionic.qcow2"; variant="ubuntu18.04";;
+	focal) image="${image_dir}/standard/focal.qcow2"; salted_image="${image_dir}/salted/focal.qcow2"; variant="ubuntu20.04";;
+	jammy) image="${image_dir}/standard/jammy.qcow2"; salted_image="${image_dir}/salted/jammy.qcow2"; variant="ubuntu20.04";;
+	centos7) image="${image_dir}/standard/centos7.qcow2"; salted_image="${image_dir}/salted/centos7.qcow2"; variant="centos7.0";;
+	alma8) image="${image_dir}/standard/almalinux8.qcow2"; salted_image="${image_dir}/salted/almalinux8.qcow2"; variant="centos8";;
+	rocky8) image="${image_dir}/standard/rocky8.qcow2"; salted_image="${image_dir}/salted/rocky8.qcow2"; variant="centos8";;
+	buster) image="${image_dir}/standard/buster.qcow2"; salted_image="${image_dir}/salted/buster.qcow2"; variant="debian10";;
+	bullseye) image="${image_dir}/standard/bullseye.qcow2"; salted_image="${image_dir}/salted/bullseye.qcow2"; variant="debian10";;
+	*) bad_taste;;
 esac
 
 # network needs to be validated - expected to be a valid bridge interface name
@@ -66,6 +87,11 @@ fi
 
 # variablize (is that a word?) this so I don't have to type it again in this script
 disk_image=${target_dir}/${host_name}.qcow2
+
+# if salted flag is passed, swap out image for salted_image
+if [ -n "${salted}" ]; then
+	image="${salted_image}"
+fi
 
 # I HAVE been known to forget to create a flavor on the VM host (with virt-sysprep), so we should... check that.
 test -f ${image}
@@ -89,15 +115,22 @@ if [ $? -eq 0 ]; then
 fi
 
 # copy the disk image to the right location, and then resize it
+echo "Copying ${image} to ${disk_image} and resizing to ${storage}G..."
 sudo cp ${image} ${disk_image} && sudo qemu-img resize ${disk_image} ${storage}G
 if [ $? -ne 0 ]; then
 	echo "Something went wrong either with copying the image, or resizing it -- exiting."
 	exit 255
 fi
 
+# update the OS to latest, and set the hostname. that way, when it first comes up, DHCP will use the right hostname.
+sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --selinux-relabel
+
 # kick off virt-install
+echo "Installing VM ${host_name}..."
 sudo virt-install --virt-type kvm --name ${host_name} --ram ${memory} --vcpus ${vcpus} \
 	--os-variant ${variant} --network=bridge=${network},model=virtio --graphics vnc \
 	--disk path=${disk_image},cache=writeback \
-    --sysinfo "type=smbios,system_serial=ds=nocloud-net\;s=http://10.200.54.5/${host_name}/" \
+	--sysinfo "system_serial=ds=nocloud-net;h=${host_name};s=${cloud_init_url}/${host_name}/" \
 	--noautoconsole --import
+
+exit 0
