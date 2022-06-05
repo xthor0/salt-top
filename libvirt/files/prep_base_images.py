@@ -128,11 +128,16 @@ def write_nice_output():
 
 
 def virt_sysprep(file, newfile, salt):
+    # special handling needed for rocky8 and maybe almalinux
+    # need to install selinux-policy-targeted because selinux is DISABLED on rocky8, at least, how dumb
+    shutil.copy(file, newfile)
+    if "rocky" in file or "almalinux" in file:
+        print("Installing SELinux packages due to a massive oversight by the Rocky folks...")
+        cmdLine = "/usr/bin/virt-sysprep -a {} --network --install selinux-policy-targeted".format(newfile)
+        process = subprocess.run(cmdLine, shell=True, check=True)
     if salt:
-        shutil.copy(file, newfile)
         cmdLine = "/usr/bin/virt-sysprep -a {} --network --update --selinux-relabel --install qemu-guest-agent,curl,sudo --run-command 'curl -L https://bootstrap.saltstack.com -o /tmp/install_salt.sh && bash /tmp/install_salt.sh -X -x python3'".format(newfile)
     else:
-        shutil.copy(file, newfile)
         cmdLine = "/usr/bin/virt-sysprep -a {} --network --update --selinux-relabel --install qemu-guest-agent,sudo".format(newfile)
     print("Running virt-sysprep on file {}".format(newfile))
     process = subprocess.run(cmdLine, shell=True, check=True)
