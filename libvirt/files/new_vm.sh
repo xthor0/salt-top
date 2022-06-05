@@ -2,7 +2,7 @@
 
 image_dir=/mnt/cloudimg
 target_dir=/var/lib/libvirt/images
-cloud_init_url="http://10.200.54.5" # TODO: build a VM in DMZ, salt the motherfucker
+cloud_init_url="http://10.200.55.5" # TODO: build a VM in DMZ, salt the motherfucker
 
 # default options
 flavor="rocky8"
