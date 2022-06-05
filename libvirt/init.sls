@@ -20,6 +20,7 @@ libvirt:
 cockpit-service:
   service.running:
     - name: cockpit.socket
+    - enable: True
     - require:
       - pkg: libvirt
 {% endif %} # osmajorrelease end if
