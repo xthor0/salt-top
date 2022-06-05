@@ -11,6 +11,8 @@ libvirt:
         - cockpit-machines
         - virt-install
         - libguestfs-tools-c
+        - python3
+        - python3-progressbar2
   service.running:
     - name: libvirtd
     - require:
