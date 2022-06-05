@@ -8,6 +8,7 @@ ciweb-packages:
 httpd:
   service.running:
     - enable: True
+    - watch: /etc/httpd/conf.d/override.conf
 
 htaccess_file:
   file.managed:
@@ -21,6 +22,13 @@ index_php:
   file.managed:
     - name: /var/www/html/index.php
     - source: salt://ciweb/files/index.php
+    - user: root
+    - group: root
+    - mode: 644
+
+/etc/httpd/conf.d/override.conf:
+  file.managed:
+    - source: salt://ciweb/files/override.conf
     - user: root
     - group: root
     - mode: 644
