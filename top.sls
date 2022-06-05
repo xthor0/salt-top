@@ -38,3 +38,6 @@ dev:
   'G@env:dev and G@roles:ciweb':
     - match: compound
     - ciweb
+  'G@env:dev and G@roles:iperf3':
+    - match: compound
+    - iperf3
