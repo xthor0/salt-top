@@ -15,7 +15,7 @@ htaccess_file:
     - source: salt://ciweb/files/htaccess
     - user: root
     - group: root
-    - mode: 755
+    - mode: 644
 
 index_php:
   file.managed:
@@ -23,4 +23,4 @@ index_php:
     - source: salt://ciweb/files/index.php
     - user: root
     - group: root
-    - mode: 755
+    - mode: 644
