@@ -5,7 +5,7 @@ iperf3user:
   user.present:
     - name: iperf3
     - uid: 10101
-    - gid: 10101
+    - usergroup: True
     - shell: /usr/sbin/nologin
 
 iperf3-service-file:
