@@ -4,19 +4,29 @@ kill-firewalld-service:
     - name: firewalld
     - enable: False
 {% if grains.get('osmajorrelease', '') == 8 %}
+{# this is a hack, but the nftable states don't seem to let me delete a table? #}
+{# this only shows up on hosts built from the installer ISO #}
+{# this doesn't work: 
+
 delete-nft-ip-firewalld:
   nftables.delete:
     - family: ip
     - table: firewalld
 
+#}
+delete-nft-ip-firewalld:
+  cmd.run:
+    - name: nft delete table ip firewalld
+    - unless: nft list tables | grep -q '^table ip firewalld'
+
 delete-nft-ip6-firewalld:
-  nftables.delete:
-    - family: ip6
-    - table: firewalld
+  cmd.run:
+    - name: nft delete table ip6 firewalld
+    - unless: nft list tables | grep -q '^table ip6 firewalld'
 
 delete-nft-inet-firewalld:
-  nftables.delete:
-    - family: inet
-    - table: firewalld
+  cmd.run:
+    - name: nft delete table inet firewalld
+    - unless: nft list tables | grep '^table inet firewalld'
 {% endif %}
 {% endif %}
