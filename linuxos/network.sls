@@ -1,4 +1,4 @@
-{% if grains['os_family'] in [ 'RedHat', 'Rocky' ] %}
+{% if grains.get('os_family', '') == 'RedHat' %}
 kill-firewalld-service:
   service.dead:
     - name: firewalld
