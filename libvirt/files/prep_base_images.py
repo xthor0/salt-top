@@ -96,11 +96,15 @@ def validate_checksum(checksum, url, file, type):
 
     regex = re.compile('{}$'.format(filename))
 
+    hash = "null"
     for line in resp.text.split('\n'):
         match = re.search(regex, line)
         if match:
             hashArr = line.split(' ')
             hash = hashArr[0]
+    if hash == "null":
+        print("Error: could not find {} hash in {} -- exiting.".format(type, url))
+        return(False)
     
     if type == "sha256sum":
         sha256_hash = hashlib.sha256()
