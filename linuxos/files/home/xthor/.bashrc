@@ -15,7 +15,7 @@ else
 fi
 
 # bash completion
-{% if grains.get('os', '') == 'CentOS' %}
+{% if grains.get('os_family', '') == 'RedHat' %}
 if [ -f /etc/profile.d/bash_completion.sh ] && ! shopt -oq posix; then
     . /etc/profile.d/bash_completion.sh
 fi
