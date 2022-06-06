@@ -4,4 +4,3 @@ include:
   - .packages
   - .users
   - .autoupdate
-  - .hostname
