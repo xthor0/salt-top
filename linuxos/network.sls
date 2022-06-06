@@ -22,11 +22,11 @@ delete-nft-ip-firewalld:
 delete-nft-ip6-firewalld:
   cmd.run:
     - name: nft delete table ip6 firewalld
-    - unless: nft list tables | grep -qv '^table ip6 firewalld'
+    - unless: test -x $(which nft) && nft list tables | grep -qv '^table ip6 firewalld' || true
 
 delete-nft-inet-firewalld:
   cmd.run:
     - name: nft delete table inet firewalld
-    - unless: nft list tables | grep -qv '^table inet firewalld'
+    - unless: test -x $(which nft) && nft list tables | grep -qv '^table inet firewalld' || true
 {% endif %}
 {% endif %}
