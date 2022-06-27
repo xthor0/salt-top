@@ -60,5 +60,5 @@ install_virtualbox_extpack:
     - name: VBoxManage extpack install --accept-license /srv/{{ extpack }}
     - unless: /usr/bin/vboxmanage list extpacks | grep -q 'Extension Packs.*1'
     - require:
-      - file: /srv/{{ extpack }}
+      - cmd: download_virtualbox_extpack
 
