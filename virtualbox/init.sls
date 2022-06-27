@@ -40,6 +40,14 @@ vbox6inst:
     - group: root
     - mode: 664
 
+# set up virtualbox
+run_vbox_config:
+  cmd.run:
+    - name: /sbin/vboxconfig
+    - unless: lsmod | grep -q vbox
+    - require:
+        - pkg: vbox6inst
+
 # install extpack
 download_virtualbox_extpack:
   cmd.run:
