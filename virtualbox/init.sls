@@ -45,7 +45,7 @@ vbox6inst:
 run_vbox_config:
   cmd.run:
     - name: /sbin/vboxconfig
-    - unless: lsmod | grep -q vbox
+    - unless: lsmod | grep -q vboxdrv
     - require:
         - pkg: vbox6inst
 
@@ -56,9 +56,9 @@ download_virtualbox_extpack:
     - unless: test -f /srv/{{ extpack }}
 
 install_virtualbox_extpack:
-  cmd.wait:
+  cmd.run:
     - name: VBoxManage extpack install --accept-license /srv/{{ extpack }}
-    - watch:
-      - cmd: download_virtualbox_extpack
     - unless: /usr/bin/vboxmanage list extpacks | grep -q 'Extension Packs: 1'
+    - require:
+      - cmd: download_virtualbox_extpack
 
