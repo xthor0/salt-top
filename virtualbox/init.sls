@@ -2,6 +2,8 @@
 {%- set vbox_latest = salt.cmd.run('curl -s http://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT') %}
 {%- set extpack = "Oracle_VM_VirtualBox_Extension_Pack-" ~ vbox_latest ~ ".vbox-extpack" %}
 {%- set extpack_sha256 = salt.cmd.run('curl -s http://download.virtualbox.org/virtualbox/' ~ vbox_latest ~ '/SHA256SUMS | grep Oracle_VM_VirtualBox_Extension_Pack-' ~ vbox_latest ~ '.vbox-extpack | cut -d " " -f 1') %}
+{%- set extpack_sha256_cmd = 'curl -s http://download.virtualbox.org/virtualbox/' ~ vbox_latest ~ '/SHA256SUMS | grep Oracle_VM_VirtualBox_Extension_Pack-' ~ vbox_latest ~ '.vbox-extpack | cut -d " " -f 1' %}
+# {{ extpack_sha256_cmd }}
 
 # we need to manage in a repo
 virtualbox-yum-repo:
