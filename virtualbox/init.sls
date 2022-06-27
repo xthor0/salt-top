@@ -1,3 +1,7 @@
+# set the latest version as a variable
+{%- set vbox_latest = salt.cmd.run('curl http://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT') %}
+{%- set extpack = 'Oracle_VM_VirtualBox_Extension_Pack-' ~ {{ vbox_latest }} ~ '.vbox-extpack' %}
+
 # we need to manage in a repo
 virtualbox-yum-repo:
     pkgrepo.managed:
@@ -36,4 +40,14 @@ vbox6inst:
     - group: root
     - mode: 664
 
-# install extpack - to do
+# install extpack
+download_virtualbox_extpack:
+  cmd.run:
+    - name: wget http://download.virtualbox.org/virtualbox/{{ vbox_latest }}/{{ extpack }} -O /srv/{{ extpack }}
+    - unless: test -f /srv/{{ extpack }}
+
+install_virtualbox_extpack:
+  cmd.wait:
+    - name: VBoxManage extpack install --accept-license /srv/{{ extpack }}
+    - watch:
+      - cmd: download_virtualbox_extpack
