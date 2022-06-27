@@ -41,3 +41,6 @@ dev:
   'G@env:dev and G@roles:iperf3':
     - match: compound
     - iperf3
+  'G@env:dev and G@roles:virtualbox':
+    - match: compound
+    - virtualbox
