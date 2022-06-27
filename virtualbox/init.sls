@@ -1,8 +1,9 @@
 # set the latest version as a variable
 {%- set vbox_latest = salt.cmd.run('curl -s http://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT') %}
 {%- set extpack = "Oracle_VM_VirtualBox_Extension_Pack-" ~ vbox_latest ~ ".vbox-extpack" %}
+{%- set get_the_sha_file = salt.cmd.run('wget http://download.virtualbox.org/virtualbox/' ~ vbox_latest ~ '/SHA256SUMS -O /tmp/SHA256SUMS.vbox') %}
 {%- set extpack_sha256_cmd = 'curl -s http://download.virtualbox.org/virtualbox/' ~ vbox_latest ~ '/SHA256SUMS | grep ' ~ extpack ~ ' | cut -d " " -f 1' %}
-{%- set extpack_sha256 = salt.cmd.run(extpack_sha256_cmd) %}
+{%- set extpack_sha256 = salt.cmd.run('cat /tmp/SHA256SUMS.vbox | grep ' ~ extpack ~ ' | cut -d \  -f 1') %}
 # vbox_latest --> {{ vbox_latest }}
 # extpack --> {{ extpack }}
 # extpack_sha256_cmd --> {{ extpack_sha256_cmd }}
