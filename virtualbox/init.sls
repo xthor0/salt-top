@@ -23,6 +23,7 @@ virtualbox-centos-deps:
             - git
             - mtools
             - qemu-img
+            - elfutils-libelf-devel
 
 # now, install VirtualBox...
 vbox6inst:
