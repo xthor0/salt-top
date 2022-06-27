@@ -57,7 +57,7 @@ download_virtualbox_extpack:
 
 install_virtualbox_extpack:
   cmd.run:
-    - name: VBoxManage extpack install --accept-license /srv/{{ extpack }}
+    - name: VBoxManage extpack install --accept-license=sha256 /srv/{{ extpack }}
     - unless: /usr/bin/vboxmanage list extpacks | grep -q 'Extension Packs.*1'
     - require:
       - cmd: download_virtualbox_extpack
