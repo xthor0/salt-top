@@ -4,10 +4,12 @@
 {%- set get_the_sha_file = salt.cmd.run('wget http://download.virtualbox.org/virtualbox/' ~ vbox_latest ~ '/SHA256SUMS -O /tmp/SHA256SUMS.vbox') %}
 {%- set extpack_sha256_cmd = 'curl -s http://download.virtualbox.org/virtualbox/' ~ vbox_latest ~ '/SHA256SUMS | grep ' ~ extpack ~ ' | cut -d " " -f 1' %}
 {%- set extpack_sha256 = salt.cmd.run('grep ' ~ extpack ~ ' /tmp/SHA256SUMS.vbox | cut -d \  -f 1') %}
+{%- set another_cmd = 'grep ' ~ extpack ~ ' /tmp/SHA256SUMS.vbox | cut -d \  -f 1' %}
 # vbox_latest --> {{ vbox_latest }}
 # extpack --> {{ extpack }}
 # extpack_sha256_cmd --> {{ extpack_sha256_cmd }}
 # extpack_sha256 --> {{ extpack_sha256 }}
+# another_cmd --> {{ another_cmd }}
 
 # we need to manage in a repo
 virtualbox-yum-repo:
