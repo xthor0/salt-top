@@ -1,6 +1,6 @@
 # set the latest version as a variable
 {%- set vbox_latest = salt.cmd.run('curl http://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT') %}
-{%- set extpack = 'Oracle_VM_VirtualBox_Extension_Pack-' ~ {{ vbox_latest }} ~ '.vbox-extpack' %}
+{%- set extpack = "Oracle_VM_VirtualBox_Extension_Pack-" ~ {{ vbox_latest }} ~ ".vbox-extpack" %}
 
 # we need to manage in a repo
 virtualbox-yum-repo:
