@@ -53,12 +53,12 @@ run_vbox_config:
 download_virtualbox_extpack:
   cmd.run:
     - name: 'wget http://download.virtualbox.org/virtualbox/{{ vbox_latest }}/{{ extpack }} -O /srv/{{ extpack }}'
-    - unless: test -f /srv/{{ extpack }}
+    - creates: /srv/{{ extpack }}
 
 install_virtualbox_extpack:
   cmd.run:
     - name: VBoxManage extpack install --accept-license /srv/{{ extpack }}
-    - unless: /usr/bin/vboxmanage list extpacks | grep -q 'Extension Packs: 1'
+    - unless: /usr/bin/vboxmanage list extpacks | grep -q 'Extension Packs\: 1'
     - require:
-      - cmd: download_virtualbox_extpack
+      - file: /srv/{{ extpack }}
 
