@@ -1,15 +1,16 @@
-# set the latest version as a variable
+{# set the latest version as a variable #}
 {%- set vbox_latest = salt.cmd.run('curl -s http://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT') %}
 {%- set extpack = "Oracle_VM_VirtualBox_Extension_Pack-" ~ vbox_latest ~ ".vbox-extpack" %}
-{%- set get_the_sha_file = salt.cmd.run('wget http://download.virtualbox.org/virtualbox/' ~ vbox_latest ~ '/SHA256SUMS -O /tmp/SHA256SUMS.vbox') %}
+
+{# these ain't working #}
 {%- set extpack_sha256_cmd = 'curl -s http://download.virtualbox.org/virtualbox/' ~ vbox_latest ~ '/SHA256SUMS | grep ' ~ extpack ~ ' | cut -d " " -f 1' %}
-{%- set extpack_sha256 = salt.cmd.run('grep ' ~ extpack ~ ' /tmp/SHA256SUMS.vbox | cut -d \  -f 1') %}
-{%- set another_cmd = 'grep ' ~ extpack ~ ' /tmp/SHA256SUMS.vbox | cut -d \  -f 1' %}
+{%- set extpack_sha256 = salt.cmd.shell(extpack_sha256_cmd) %}
+
+# debugging output to show in render
 # vbox_latest --> {{ vbox_latest }}
 # extpack --> {{ extpack }}
 # extpack_sha256_cmd --> {{ extpack_sha256_cmd }}
 # extpack_sha256 --> {{ extpack_sha256 }}
-# another_cmd --> {{ another_cmd }}
 
 # we need to manage in a repo
 virtualbox-yum-repo:
