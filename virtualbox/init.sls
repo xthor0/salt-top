@@ -43,7 +43,7 @@ vbox6inst:
 # install extpack
 download_virtualbox_extpack:
   cmd.run:
-    - name: wget http://download.virtualbox.org/virtualbox/{{ vbox_latest }}/{{ extpack }} -O /srv/{{ extpack }}
+    - name: 'wget http://download.virtualbox.org/virtualbox/{{ vbox_latest }}/{{ extpack }} -O /srv/{{ extpack }}'
     - unless: test -f /srv/{{ extpack }}
 
 install_virtualbox_extpack:
