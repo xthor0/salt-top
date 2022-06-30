@@ -46,6 +46,8 @@ xthor sshkeys:
     - user: xthor
     - source: salt://linuxos/files/home/xthor/.ssh/authorized_keys
     - config: /home/xthor/.ssh/authorized_keys
+    - ssh_keys:
+      - AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJ4OwD4MqSuGlqmJsMY6SCEY7Js4n1rS+altYALKSqN/XOlxEGXOkyrfrlgZ99jaj7IDYeVYbDZN4fMUlTYjWGA=
     - require:
       - user: xthor
 
