@@ -42,7 +42,7 @@ remove-centos-user:
     - purge: True
 
 xthor sshkeys:
-  ssh_auth.present:
+  ssh_auth.manage:
     - user: xthor
     - source: salt://linuxos/files/home/xthor/.ssh/authorized_keys
     - config: /home/xthor/.ssh/authorized_keys
