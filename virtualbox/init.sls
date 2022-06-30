@@ -1,3 +1,21 @@
+{# set the latest version as a variable #}
+{%- set vbox_latest = salt.cmd.run('curl -s http://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT') %}
+{%- set extpack = "Oracle_VM_VirtualBox_Extension_Pack-" ~ vbox_latest ~ ".vbox-extpack" %}
+
+{# these don't get used, but I'd like to keep them for reference
+{%- set extpack_sha256_cmd = 'curl -s http://download.virtualbox.org/virtualbox/' ~ vbox_latest ~ '/SHA256SUMS | grep ' ~ extpack ~ ' | cut -d " " -f 1' %}
+{%- set extpack_sha256 = salt.cmd.shell(extpack_sha256_cmd) %}
+
+# debugging output to show in render
+# vbox_latest --> {{ vbox_latest }}
+# extpack --> {{ extpack }}
+# extpack_sha256_cmd --> {{ extpack_sha256_cmd }}
+# extpack_sha256 --> {{ extpack_sha256 }}
+#}
+
+{# I had to manually install the extension pack to figure out how this worked, I assume it will change each time #}
+{%- set extpack_uuid = '33d7284dc4a0ece381196fda3cfe2ed0e1e8e7ed7f27b9a9ebc4ee22e24bd23c' %}
+
 # we need to manage in a repo
 virtualbox-yum-repo:
     pkgrepo.managed:
@@ -19,6 +37,7 @@ virtualbox-centos-deps:
             - git
             - mtools
             - qemu-img
+            - elfutils-libelf-devel
 
 # now, install VirtualBox...
 vbox6inst:
@@ -36,4 +55,24 @@ vbox6inst:
     - group: root
     - mode: 664
 
-# install extpack - to do
+# set up virtualbox
+run_vbox_config:
+  cmd.run:
+    - name: /sbin/vboxconfig
+    - unless: lsmod | grep -q vboxdrv
+    - require:
+        - pkg: vbox6inst
+
+# install extpack
+download_virtualbox_extpack:
+  cmd.run:
+    - name: 'wget http://download.virtualbox.org/virtualbox/{{ vbox_latest }}/{{ extpack }} -O /srv/{{ extpack }}'
+    - creates: /srv/{{ extpack }}
+
+install_virtualbox_extpack:
+  cmd.run:
+    - name: VBoxManage extpack install --accept-license={{ extpack_uuid }} /srv/{{ extpack }}
+    - unless: /usr/bin/vboxmanage list extpacks | grep -q 'Extension Packs.*1'
+    - require:
+      - cmd: download_virtualbox_extpack
+

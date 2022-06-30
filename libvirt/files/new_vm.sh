@@ -124,6 +124,10 @@ fi
 
 # update the OS to latest, and set the hostname. that way, when it first comes up, DHCP will use the right hostname.
 sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --selinux-relabel
+if [ $? -ne 0 ]; then
+	echo "virt-sysprep exited with a non-zero status -- exiting."
+	exit 255
+fi
 
 # kick off virt-install
 echo "Installing VM ${host_name}..."
