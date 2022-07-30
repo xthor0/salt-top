@@ -5,7 +5,7 @@ target_dir=/var/lib/libvirt/images
 cloud_init_url="http://10.200.55.5" # TODO: build a VM in DMZ, salt the motherfucker
 
 # default options
-flavor="rocky8"
+flavor="bullseye"
 ram=2
 vcpus=1
 storage=10
@@ -87,6 +87,7 @@ fi
 
 # variablize (is that a word?) this so I don't have to type it again in this script
 disk_image=${target_dir}/${host_name}.qcow2
+ci_image=${target_dir}/${host_name}-ci.qcow2
 
 # if salted flag is passed, swap out image for salted_image
 if [ -n "${salted}" ]; then
@@ -129,12 +130,57 @@ if [ $? -ne 0 ]; then
 	exit 255
 fi
 
+# create a meta-data file
+cat << EOF > /tmp/meta-data
+instance-id: 1
+local-hostname: ${host_name}
+EOF
+
+# create user-data file
+cat << EOF > /tmp/user-data
+#cloud-config
+users:
+    - name: root
+      plain_text_passwd: resetm3n0w
+      lock_passwd: false
+      ssh_authorized_keys:
+        - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJ4OwD4MqSuGlqmJsMY6SCEY7Js4n1rS+altYALKSqN/XOlxEGXOkyrfrlgZ99jaj7IDYeVYbDZN4fMUlTYjWGA= caaro@secretive.caaro.local
+        - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBM0iPdemESmJ/Dgs/Xg1apaSVl8x27IP7FJcwRZa9BKQ6nNjFMhVVLNpvXfeAV8iq09k86/o0McXpR3T/Li2Kmk= hala@secretive.hala.local
+    - name: xthor
+      shell: /bin/bash
+      plain_text_passwd: p@ssw0rd
+      lock_passwd: false
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      ssh_authorized_keys:
+        - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJ4OwD4MqSuGlqmJsMY6SCEY7Js4n1rS+altYALKSqN/XOlxEGXOkyrfrlgZ99jaj7IDYeVYbDZN4fMUlTYjWGA= caaro@secretive.caaro.local
+        - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBM0iPdemESmJ/Dgs/Xg1apaSVl8x27IP7FJcwRZa9BKQ6nNjFMhVVLNpvXfeAV8iq09k86/o0McXpR3T/Li2Kmk= hala@secretive.hala.local
+timezone: America/Denver
+package_upgrade: true
+runcmd:
+    - touch /etc/cloud/cloud-init.disabled
+EOF
+
+# create ci image
+# sure would be nice if RHEL and their clones had cloud-localds! Or, hell, if virt-install supported --cloud-init (not till v3.2, sadly)
+sudo dd if=/dev/zero of=${ci_image} count=1 bs=1M && sudo mkfs.vfat -n cidata ${ci_image}
+if [ $? -eq 0 ]; then
+	# stuff in the user-data and meta-data files
+	sudo mcopy -i ${ci_image} /tmp/meta-data :: && sudo mcopy -i ${ci_image} /tmp/user-data ::
+	if [ $? -ne 0 ]; then
+		echo "Error: could not mcopy user-data or meta-data to ${ci_image}. Exiting."
+		exit 255
+	fi
+else
+	echo "Error: could not create ${ci_image}. Exiting."
+	exit 255
+fi
+
 # kick off virt-install
 echo "Installing VM ${host_name}..."
 sudo virt-install --virt-type kvm --name ${host_name} --ram ${memory} --vcpus ${vcpus} \
 	--os-variant ${variant} --network=bridge=${network},model=virtio --graphics vnc \
 	--disk path=${disk_image},cache=writeback \
-	--sysinfo "system_serial=ds=nocloud-net;h=${host_name};s=${cloud_init_url}/${host_name}/" \
+	--disk path=${ci_image} \
 	--noautoconsole --import
 
 exit 0
