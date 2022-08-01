@@ -2,9 +2,10 @@
 ## what's the default interface on this system?
 netdev=$(ip route | grep ^default | awk '{ print $5 }')
 
-# sanity check - if we have more than one entry here, we're in trouble
-if [ $(nmcli -t -f UUID con | wc -l) -gt 1 ]; then
-    echo "This script should only be run on machines with only one defined connection. Exiting."
+# sanity check - we should be running this on a libvirt host
+rpm -qa | grep -q libvirt
+if [ $? -ne 0 ]; then
+    echo "Error: This machine doesn't have libvirt installed. Exiting."
     exit 255
 fi
 
