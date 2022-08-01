@@ -34,8 +34,8 @@ distros = {
         'checksum_type': 'sha256sum'
     },
     'rocky8': {
-        'url': 'https://dl.rockylinux.org/pub/rocky/8.5/images/Rocky-8-GenericCloud-8.5-20211114.2.x86_64.qcow2',
-        'checksum': 'https://dl.rockylinux.org/pub/rocky/8.5/images/CHECKSUM',
+        'url': 'https://dl.rockylinux.org/pub/rocky/8.5/images/Rocky-8-GenericCloud.latest.x86_64.qcow2',
+        'checksum': 'https://dl.rockylinux.org/pub/rocky/8/images/CHECKSUM',
         'checksum_type': 'sha256sum'
     },
     'almalinux8': {
@@ -101,44 +101,17 @@ def validate_checksum(checksum, url, file, type):
     filename = os.path.basename(a.path).strip()
     print('Debug: filename is {}'.format(filename))
 
-    # curse you, Rocky Linux.
-    '''
-    so, the TL;DR: the format of Rocky Linux checksum for 8.5: 
-
-    SHA256 (Rocky-8-GenericCloud-8.5-20211114.2.x86_64.qcow2) = c23f58f26f73fb9ae92bfb4cf881993c23fdce1bbcfd2881a5831f90373ce0c8
-
-    while in 8.6, they do WHAT EVERYONE ELSE DOES:
-
-    77e79f487c70f6bfa5655d8084e02cb8d31900a2c2a22b2334c3401b40a1231c  Rocky-8-GenericCloud-8.6-20220515.x86_64.qcow2
-
-    but the 8.6 image is TOTALLY FUCKING BROKEN. Missing sudo, SELinux, and a bunch of shit. Check my Git history, you'll see I already tried to work around THAT mess.
-
-    So, someday maybe 8.7 will come out and be un-fucked. Really won't matter till I try to run this and 8.5 gives a 404.
-    '''
-    if "Rocky-8-GenericCloud" in filename:
-        regex = re.compile('SHA256 \({}\) ='.format(filename))
-        hash = "null"
-        for line in resp.text.split('\n'):
-            match = re.search(regex, line)
-            print('Debugging: {}'.format(line))
-            if match:
-                hashArr = line.split(' ')
-                hash = hashArr[3]
-        if hash == "null":
-            print("Error: could not find {} hash in {} -- exiting.".format(type, checksum))
-            return(False)
-    else:
-        regex = re.compile('{}$'.format(filename))
-        hash = "null"
-        for line in resp.text.split('\n'):
-            match = re.search(regex, line)
-            print('Debugging: {}'.format(line))
-            if match:
-                hashArr = line.split(' ')
-                hash = hashArr[0]
-        if hash == "null":
-            print("Error: could not find {} hash in {} -- exiting.".format(type, checksum))
-            return(False)
+    regex = re.compile('{}$'.format(filename))
+    hash = "null"
+    for line in resp.text.split('\n'):
+        match = re.search(regex, line)
+        print('Debugging: {}'.format(line))
+        if match:
+            hashArr = line.split(' ')
+            hash = hashArr[0]
+    if hash == "null":
+        print("Error: could not find {} hash in {} -- exiting.".format(type, checksum))
+        return(False)
     
     if type == "sha256sum":
         sha256_hash = hashlib.sha256()
