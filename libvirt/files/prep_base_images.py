@@ -34,7 +34,7 @@ distros = {
         'checksum_type': 'sha256sum'
     },
     'rocky8': {
-        'url': 'https://dl.rockylinux.org/pub/rocky/8.5/images/Rocky-8-GenericCloud.latest.x86_64.qcow2',
+        'url': 'https://dl.rockylinux.org/pub/rocky/8/images/Rocky-8-GenericCloud.latest.x86_64.qcow2',
         'checksum': 'https://dl.rockylinux.org/pub/rocky/8/images/CHECKSUM',
         'checksum_type': 'sha256sum'
     },
@@ -99,13 +99,13 @@ def validate_checksum(checksum, url, file, type):
     
     a = urlparse(url)
     filename = os.path.basename(a.path).strip()
-    print('Debug: filename is {}'.format(filename))
+    #print('Debug: filename is {}'.format(filename))
 
     regex = re.compile('{}$'.format(filename))
     hash = "null"
     for line in resp.text.split('\n'):
         match = re.search(regex, line)
-        print('Debugging: {}'.format(line))
+        #print('Debugging: {}'.format(line))
         if match:
             hashArr = line.split(' ')
             hash = hashArr[0]
