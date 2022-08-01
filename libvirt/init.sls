@@ -12,6 +12,7 @@ libvirt:
         - virt-install
         - libguestfs-tools-c
         - python3-progressbar2
+        - python36
   service.running:
     - name: libvirtd
     - require:
