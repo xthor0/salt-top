@@ -2,10 +2,9 @@
 
 image_dir=/mnt/cloudimg
 target_dir=/var/lib/libvirt/images
-cloud_init_url="http://10.200.55.5" # TODO: build a VM in DMZ, salt the motherfucker
 
 # default options
-flavor="rocky8"
+flavor="bullseye"
 ram=2
 vcpus=1
 storage=10
@@ -87,6 +86,7 @@ fi
 
 # variablize (is that a word?) this so I don't have to type it again in this script
 disk_image=${target_dir}/${host_name}.qcow2
+ci_image=${target_dir}/${host_name}-ci.qcow2
 
 # if salted flag is passed, swap out image for salted_image
 if [ -n "${salted}" ]; then
@@ -114,6 +114,16 @@ if [ $? -eq 0 ]; then
 	exit 255
 fi
 
+# create a temp dir for user-data and meta-data files
+tmpdir=$(mktemp -d)
+
+# for virt-sysprep --copy-in to work correctly, the directory name MUST be nocloud
+mkdir ${tmpdir}/nocloud
+if [ $? -ne 0 ]; then
+	echo "Error creating ${tmpdir}/nocloud -- exiting."
+	exit 255
+fi
+
 # copy the disk image to the right location, and then resize it
 echo "Copying ${image} to ${disk_image} and resizing to ${storage}G..."
 sudo cp ${image} ${disk_image} && sudo qemu-img resize ${disk_image} ${storage}G
@@ -122,8 +132,40 @@ if [ $? -ne 0 ]; then
 	exit 255
 fi
 
-# update the OS to latest, and set the hostname. that way, when it first comes up, DHCP will use the right hostname.
-sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --selinux-relabel
+# create a meta-data file
+cat << EOF > ${tmpdir}/nocloud/meta-data
+instance-id: 1
+local-hostname: ${host_name}
+EOF
+
+# create user-data file
+cat << EOF > ${tmpdir}/nocloud/user-data
+#cloud-config
+users:
+    - name: root
+      plain_text_passwd: resetm3n0w
+      lock_passwd: false
+      ssh_authorized_keys:
+        - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJ4OwD4MqSuGlqmJsMY6SCEY7Js4n1rS+altYALKSqN/XOlxEGXOkyrfrlgZ99jaj7IDYeVYbDZN4fMUlTYjWGA= caaro@secretive.caaro.local
+        - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBM0iPdemESmJ/Dgs/Xg1apaSVl8x27IP7FJcwRZa9BKQ6nNjFMhVVLNpvXfeAV8iq09k86/o0McXpR3T/Li2Kmk= hala@secretive.hala.local
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDJNEonif7PNwf6DFR1/nqU9phsdgGFzSMO8EWkD3caLDoAs8/TvnQ+iwvzcox8yAKpU6uIaungjEil3LdiScQSB6yJXB++/4pO827+8AkYmo3seKWkk7LTpHuW8zPc8dbsre1uBCuV7VoAeMJkml1O4wwYooJVt55Nfj2qwVqbg7EMyO9C0KN6X85GLOV1WI3Oa95gmwJvnhg3sbFFW0l4DddsU7rmqzftHyfNzgg/X7VbBa1GzAhhr+EmCh19r8msAgVj6odKutk9/Z8bvE9kUH1+4c0WkdpeVOkdcacluRFZ3lrb9+UTdZ/H1ebTEKbpp/wg7eGT+pO4JcFNrqSqyiVkcBjYi6u8rzCJ3KjSy9718wwWM+y3m/NW0gCuuKTQnCeNqe+b1SUvvPZqGvMykGxStHszkVSDjuGZlu9IsP59ALSWDOvTkybu+fIONw4EmItrdPmGqGHYuA0tTzwLh4QqPr8fvF8sZaVislzHaPWzwaafKc2QpxjoABpfXdU= xthor@spindel.xthorsworld.com
+    - name: xthor
+      shell: /bin/bash
+      plain_text_passwd: p@ssw0rd
+      lock_passwd: false
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      ssh_authorized_keys:
+        - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJ4OwD4MqSuGlqmJsMY6SCEY7Js4n1rS+altYALKSqN/XOlxEGXOkyrfrlgZ99jaj7IDYeVYbDZN4fMUlTYjWGA= caaro@secretive.caaro.local
+        - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBM0iPdemESmJ/Dgs/Xg1apaSVl8x27IP7FJcwRZa9BKQ6nNjFMhVVLNpvXfeAV8iq09k86/o0McXpR3T/Li2Kmk= hala@secretive.hala.local
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDJNEonif7PNwf6DFR1/nqU9phsdgGFzSMO8EWkD3caLDoAs8/TvnQ+iwvzcox8yAKpU6uIaungjEil3LdiScQSB6yJXB++/4pO827+8AkYmo3seKWkk7LTpHuW8zPc8dbsre1uBCuV7VoAeMJkml1O4wwYooJVt55Nfj2qwVqbg7EMyO9C0KN6X85GLOV1WI3Oa95gmwJvnhg3sbFFW0l4DddsU7rmqzftHyfNzgg/X7VbBa1GzAhhr+EmCh19r8msAgVj6odKutk9/Z8bvE9kUH1+4c0WkdpeVOkdcacluRFZ3lrb9+UTdZ/H1ebTEKbpp/wg7eGT+pO4JcFNrqSqyiVkcBjYi6u8rzCJ3KjSy9718wwWM+y3m/NW0gCuuKTQnCeNqe+b1SUvvPZqGvMykGxStHszkVSDjuGZlu9IsP59ALSWDOvTkybu+fIONw4EmItrdPmGqGHYuA0tTzwLh4QqPr8fvF8sZaVislzHaPWzwaafKc2QpxjoABpfXdU= xthor@spindel.xthorsworld.com
+timezone: America/Denver
+package_upgrade: true
+runcmd:
+    - touch /etc/cloud/cloud-init.disabled
+EOF
+
+# virt-sysprep and inject user-data and meta-data
+sudo virt-sysprep -a ${disk_image} --hostname ${host_name} --network --update --run-command 'mkdir -p /var/lib/cloud/seed' --copy-in ${tmpdir}/nocloud:/var/lib/cloud/seed --selinux-relabel
 if [ $? -ne 0 ]; then
 	echo "virt-sysprep exited with a non-zero status -- exiting."
 	exit 255
@@ -134,7 +176,9 @@ echo "Installing VM ${host_name}..."
 sudo virt-install --virt-type kvm --name ${host_name} --ram ${memory} --vcpus ${vcpus} \
 	--os-variant ${variant} --network=bridge=${network},model=virtio --graphics vnc \
 	--disk path=${disk_image},cache=writeback \
-	--sysinfo "system_serial=ds=nocloud-net;h=${host_name};s=${cloud_init_url}/${host_name}/" \
 	--noautoconsole --import
+
+# cleanup
+rm -rf ${tmpdir}
 
 exit 0

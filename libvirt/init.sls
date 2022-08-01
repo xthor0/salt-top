@@ -68,6 +68,13 @@ cloud_img_mount:
     - group: root
     - mode: 755
 
+/usr/local/bin/setup_network.sh:
+  file.managed:
+    - source: salt://libvirt/files/setup_network.sh
+    - user: root
+    - group: root
+    - mode: 755
+
 /usr/local/bin/prep_base_images.py:
   file.managed:
     - source: salt://libvirt/files/prep_base_images.py
