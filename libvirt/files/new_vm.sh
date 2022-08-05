@@ -51,12 +51,39 @@ while getopts "h:f:t:s:p:r:i:m" OPTION; do
 done
 
 # make sure we have necessary variables
-if [ -z "${host_name}" -o -z "${network}" ]; then
+if [ -z "${host_name}" ]; then
   usage
 fi
 
 if [ ${#} -eq 0 ]; then
   usage
+fi
+
+# validate/set network
+if [ -z "${network}" ]; then
+  network=54
+  ifname="br-vlan54"
+else
+  case ${network} in
+    1) ifname="br0" ;;
+    50) ifname="br-vlan50" ;;
+    50) ifname="br-vlan51" ;;
+    50) ifname="br-vlan52" ;;
+    50) ifname="br-vlan53" ;;
+    50) ifname="br-vlan54" ;;
+    50) ifname="br-vlan55" ;;
+    *) echo "Bad network: ${network}"; usage;;
+  esac
+fi
+
+# ensure that hostname passed for vlan54 ends in .lab
+if [ "${network}" -eq 54 ]; then
+  if [[ ${host_name} =~ .lab ]]; then
+    echo "Hostname ${host_name} validated."
+  else
+    echo "ERROR: Hostname ${host_name} invalid with vlan id 54."
+    usage
+  fi
 fi
 
 # RAM is tricky, don't let me be stupid and specify more RAM than I have. Capping out at 16.
@@ -81,9 +108,9 @@ case ${flavor} in
 esac
 
 # network needs to be validated - expected to be a valid bridge interface name
-test -L /sys/class/net/${network}
+test -L /sys/class/net/${ifname}
 if [ $? -ne 0 ]; then
-  echo "${network} is not a valid network interface - exiting."
+  echo "${ifname} for network ${network} is not a valid network interface - exiting."
   exit 255
 fi
 
@@ -127,9 +154,8 @@ fi
 # network validation
 # maybe I should stop asking for a NIC name above, and start referencing VLAN IDs only. something to think about.
 if [ -n "${ipaddr}" ]; then
-  vlan_id="${network: -2}"
   ip_octet=$(echo ${ipaddr} | cut -d \. -f 3)
-  if [ ${vlan_id} -ne ${ip_octet} ]; then
+  if [ ${network} -ne ${ip_octet} ]; then
     echo "Error: IP address you specified does not match VLAN. Exiting."
     exit 255
   fi
@@ -194,9 +220,8 @@ EOF
 if [ -n "${ipaddr}" ]; then
   # we expect this IP address to be provided in x.x.x.x/xx form
   # TODO: regex to check it
-  gw_prefix=$(echo ${ipaddr} | cut -d \. -f 1,2,3)
-  gateway="${gw_prefix}.1"
-  if [ "$(echo ${ipaddr} | cut -d \. -f 2)" == "54" ]; then
+    gateway="10.200.${network}.1"
+  if [ ${network} -eq 54 ]; then
     search="xthorsworld.lab"
   else
     search="xthorsworld.com"
@@ -252,7 +277,7 @@ fi
 # kick off virt-install
 echo "Installing VM ${host_name}..."
 sudo virt-install --virt-type kvm --name ${host_name} --ram ${memory} --vcpus ${vcpus} \
-  --os-variant ${variant} --network=bridge=${network},model=virtio --graphics vnc \
+  --os-variant ${variant} --network=bridge=${ifname},model=virtio --graphics vnc \
   --disk path=${disk_image},cache=writeback \
   --noautoconsole --import
 
