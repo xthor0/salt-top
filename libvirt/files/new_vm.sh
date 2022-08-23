@@ -18,7 +18,7 @@ function usage() {
 `basename $0` -h <hostname of VM> [ -f <flavor> -t <network> -i <ip address> ]
 
 where flavor is one of: bionic, focal, jammy, centos7, alma8, rocky8, buster, bullseye (default: ${flavor})
-where <ip address> is in x.x.x.x/xx notation
+where <ip address> is in x.x.x.x/xx notation (default: dhcp)
 and <network> is a VLAN tag of: 1, 50-55 (default: ${network})"
 
   exit 255
