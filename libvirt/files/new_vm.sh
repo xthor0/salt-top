@@ -62,6 +62,7 @@ fi
 
 # regex to validate network
 if [[ ${network} =~ ^(1|5[0-5])$ ]]; then
+  echo "Network set to VLAN ID ${network}"
 else
   echo "Bad network: ${network}"
   usage
