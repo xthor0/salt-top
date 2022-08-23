@@ -8,6 +8,7 @@ flavor="rocky8"
 ram=2
 vcpus=1
 storage=10
+network=54
 
 # display usage
 function usage() {
@@ -59,26 +60,22 @@ if [ ${#} -eq 0 ]; then
   usage
 fi
 
-# validate/set network
-if [ -z "${network}" ]; then
-  network=54
-  ifname="br-vlan54"
+# regex to validate network
+if [[ ${network} =~ ^(1|5[0-5])$ ]]; then
 else
-  case ${network} in
-    1) ifname="br0" ;;
-    50) ifname="br-vlan50" ;;
-    50) ifname="br-vlan51" ;;
-    50) ifname="br-vlan52" ;;
-    50) ifname="br-vlan53" ;;
-    50) ifname="br-vlan54" ;;
-    50) ifname="br-vlan55" ;;
-    *) echo "Bad network: ${network}"; usage;;
-  esac
+  echo "Bad network: ${network}"
+  usage
+fi
+
+if [ ${network} -eq 1 ]; then
+  ifname="br0"
+else
+  ifname="br-vlan${network}"
 fi
 
 # ensure that hostname passed for vlan54 ends in .lab
 if [ "${network}" -eq 54 ]; then
-  if [[ ${host_name} =~ .lab ]]; then
+  if [[ ${host_name} =~ .lab$ ]]; then
     echo "Hostname ${host_name} validated."
   else
     echo "ERROR: Hostname ${host_name} invalid with vlan id 54."
