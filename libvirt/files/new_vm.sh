@@ -15,10 +15,10 @@ function usage() {
   echo "`basename $0`: Deploy a cloud-init templated libvirt VM."
   echo "Usage:
 
-`basename $0` -h <hostname of VM> -f <flavor> -t <network> [ -i <ip address> ]
+`basename $0` -h <hostname of VM> -f <flavor> [ -t <network> -i <ip address> ]
 
 where <ip address> is in x.x.x.x/xx notation
-and <network> is a VLAN tag of: 1, 50-55"
+and <network> is a VLAN tag of: 1, 50-55 (default: 54)"
 
   exit 255
 }
